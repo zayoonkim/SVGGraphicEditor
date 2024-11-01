@@ -1,21 +1,28 @@
+import ShapeView from "./shapeView.js";
+
 export default class CanvasView {
     constructor(canvasModel) { 
-        console.log("캔버스 뷰")
         this.canvasModel = canvasModel;
-        this.canvasElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        this.canvasElement.setAttribute("width", canvasModel.width);
-        this.canvasElement.setAttribute("height", canvasModel.height);
-        this.canvasElement.style.backgroundColor = canvasModel.fillColor;
+        this.canvasElement = this.initializeProps();
         this.render();
-
         // 모델의 상태 변화에 대한 리스너
         this.canvasModel.addListener(this.update.bind(this));
 
     }
+    // 내부 프로퍼티 분리
+    initializeProps() {
+        const canvasElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        canvasElement.setAttribute("width", this.canvasModel.width);
+        canvasElement.setAttribute("height", this.canvasModel.height);
+        canvasElement.style.backgroundColor = this.canvasModel.fillColor;
+        return canvasElement;
+    }
+
     render() {
-        document.getElementById("root").appendChild(this.canvasElement); // canvas 초기 렌더링
+        document.getElementById("root").appendChild(this.canvasElement);
         this.canvasModel.objectList.forEach(object => {
-            this.canvasElement.appendChild(object.createSVGElement());
+            const shapeElement = new ShapeView(object);
+            this.canvasElement.appendChild(shapeElement.createSVGElement());
         })
     }
 
