@@ -1,13 +1,11 @@
 import Canvas from "../model/canvas.js";
 import CanvasView from "../view/canvasView.js";
 import UIView from "../view/uiView.js";
-import {DEFAULT_CANVAS_JSON} from "../constants/index.js";
-
-
+import {DEFAULT_CANVAS_JSON} from "../constant.js";
 
 export default class JsonLoader {
     constructor(json) {
-        // default 초기 캔버스 설정
+        // 초기 캔버스 설정
         const parsedJson = json ? JSON.parse(json) : DEFAULT_CANVAS_JSON;
         // const parsedJson = {
         //     "canvas": {
@@ -74,7 +72,7 @@ export default class JsonLoader {
                   
         //     ]
         // }}
-        if (parsedJson?.canvas) { // 인스턴스 생성
+        if (parsedJson.canvas) {
             this.canvas = new Canvas(parsedJson.canvas);
             this.uiView = new UIView(this.canvas);
             this.canvasView = new CanvasView(this.canvas);

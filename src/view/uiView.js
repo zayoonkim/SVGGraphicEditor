@@ -4,7 +4,6 @@ export default class UIView {
     constructor(canvasModel) {
         this.canvasModel = canvasModel;
         this.createToolbar();
-        console.log("UI 뷰에 들어왔어요");
     }
 
     createToolbar() {
