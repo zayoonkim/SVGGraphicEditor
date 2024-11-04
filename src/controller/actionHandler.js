@@ -15,4 +15,9 @@ import Canvas from "../model/canvas.js";
         const targetShape = Selector.findShapeModelById(op.id);
         targetShape.updateShapeColor(op.value);
     }
+
+    static addShape(op) {
+        const canvas = Canvas.getInstance();
+        canvas.addShape(op.shapeType, op.position);
+      }
 }
