@@ -74,8 +74,8 @@ export default class JsonLoader {
         // }}
         if (parsedJson.canvas) {
             this.canvas = new Canvas(parsedJson.canvas);
-            this.uiView = new UIView(this.canvas);
             this.canvasView = new CanvasView(this.canvas);
+            this.uiView = new UIView(this.canvas, this.canvasView);
         }
         
     }
