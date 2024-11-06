@@ -29,7 +29,7 @@ export default class Canvas {
   static getInstance() {
     return Canvas.instance;
   }
-  
+
   // getter - setters
   fillColor(newFillColor) {
     return newFillColor == null ? this.fillColor : (this.fillColor = newFillColor);
@@ -54,18 +54,19 @@ export default class Canvas {
     this.notifyListeners("size");
   }
 
-  addShape(shapeType, position) {
-    // 새로운 도형 기본값 설정
+  addShapeModel(shapeType, position) {
     const shapeData = {
       type: shapeType,
-      stroke: { color: "black", width: 1 },
-      fill: { color: "white", opacity: 1 },
+      id: `${Date.now()}`,
+      stroke: { color: "#000000", width: 1 },
+      fill: { color: "#ffffff", opacity: 1.0 },
       transform: {
-        position: position,
-        size: { width: position.width, height: position.height },
-        rotation: 0,
+          position: {x : position.x, y : position.y},
+          size: { width: position.width, height: position.height },
+          rotation: 0
       },
-    };
+      alignment: "center"
+  };
     this.objectList.push(new Shape(shapeData));
     this.notifyListeners("addingShape");
   }

@@ -1,9 +1,11 @@
 import ActionManager from "./actionManager.js";
+import Connector from "./Connector.js";
 
 // TODO: 액션 설계
 
 export default class ActionGenerator {
   static updateCanvasColor(newColor) {
+    const curColor = Connector.getCanvasColor();
     ActionManager.executeAction({
       op: {
         id: "canvas",
@@ -15,7 +17,7 @@ export default class ActionGenerator {
         id: "canvas",
         type: "update",
         command: "updateCanvasColor",
-        value: "curColor",
+        value: curColor,
       },
     });
   }
@@ -39,19 +41,19 @@ export default class ActionGenerator {
     });
   }
 
-  static addShape(shapeType, position) {
+  static insertShape(shapeType, position) {
     ActionManager.executeAction({
       op: {
         id: "canvas",
         type: "add",
-        command: "addShape",
+        command: "insertShape",
         shapeType: shapeType,
         position: position,
       },
       rOp: {
         id: "canvas",
         type: "add",
-        command: "addShape",
+        command: "insertShape",
         shapeType: shapeType,
         position: position,
       },
