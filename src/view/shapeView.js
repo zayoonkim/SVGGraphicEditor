@@ -1,3 +1,5 @@
+import Selector from "../controller/selector.js";
+
 export default class ShapeView {
     constructor(shape) {
         this.shape = shape;
@@ -19,7 +21,11 @@ export default class ShapeView {
         // else if (this.shape.type === 'circle') {
         //     element = document.createElementNS("http://www.w3.org/2000/svg", "circle");
         // }
-        element.setAttribute("id", this.shape.id);
+
+        element.setAttribute("id", this.shape.id); 
+        element.addEventListener("click", () => {
+            Selector.setSelectedShape(this.shape.id);
+        });
 
         return element;
     }

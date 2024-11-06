@@ -1,9 +1,8 @@
 import ActionGenerator from "../controller/actionGenerator.js";
+import Connector from "../controller/Connector.js";
 
 export default class UIView {
-  constructor(canvasModel, canvasView) {
-    this.canvasModel = canvasModel;
-    this.canvasView = canvasView;
+  constructor() {
     this.createToolbar();
   }
 
@@ -18,7 +17,7 @@ export default class UIView {
     // 컬러 선택기
     this.colorPicker = document.createElement("input");
     this.colorPicker.type = "color";
-    // this.colorPicker.value = this.canvasModel.fillColor;
+    this.colorPicker.value = Connector.getCanvasColor();
 
     const labelColor = document.createElement("label");
     labelColor.textContent = "Canvas Color";
@@ -29,9 +28,11 @@ export default class UIView {
     labelWidth.textContent = "Width:";
     labelWidth.style.marginRight = "8px";
 
+    const canvasSize = Connector.getCanvasSize();
     this.widthInput = document.createElement("input");
     this.widthInput.type = "number";
-    // this.widthInput.value = this.canvasModel.width;
+    this.widthInput.value = canvasSize.width;
+    
     this.widthInput.style.marginRight = "8px";
 
     const labelHeight = document.createElement("label");
@@ -40,7 +41,7 @@ export default class UIView {
 
     this.heightInput = document.createElement("input");
     this.heightInput.type = "number";
-    // this.heightInput.value = this.canvasModel.height;
+    this.heightInput.value = canvasSize.height;
     this.heightInput.style.marginRight = "8px";
 
     // 확인 버튼
@@ -103,10 +104,7 @@ export default class UIView {
     ActionGenerator.updateCanvasSize(newWidth, newHeight);
   }
 
-  addShape(shapeType, position) {
-    // ActionGenerator.addShape(shapeType);
-    this.canvasView.addShape(shapeType, position );
-
-
+  addShape(shapeType) {
+    Connector.setDrawingShapeType(shapeType);
   }
 }

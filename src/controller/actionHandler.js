@@ -1,23 +1,21 @@
-import Canvas from "../model/canvas.js";
+import Connector from "./Connector.js";
 
   export default class ActionHandler {
     static updateCanvasColor(op) {
-        const canvas = Canvas.getInstance(); 
-        canvas.updateColor(op.value);
+        Connector.getCanvas().updateColor(op.value);
         
     }
     static updateCanvasSize(op) {
-        const canvas = Canvas.getInstance();
-        canvas.updateSize(op.width, op.height);
+        Connector.getCanvas().updateSize(op.width, op.height);
     }
 
+    // TODO : 도형 update
     static updateShapeColor(op) {
-        const targetShape = Selector.findShapeModelById(op.id);
-        targetShape.updateShapeColor(op.value);
+        // Connector.getCanvas.updateShapeColor(op.value);
     }
 
-    static addShape(op) {
-        const canvas = Canvas.getInstance();
-        canvas.addShape(op.shapeType, op.position);
+    static insertShape(op) {
+        Connector.getCanvas().addShapeModel(op.shapeType, op.position);
       }
+      
 }

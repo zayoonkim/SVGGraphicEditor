@@ -11,3 +11,10 @@ export const DEFAULT_CANVAS_JSON = {
         objectList: []
     }
 };
+//constant.js
+export const DEFAULT_SHAPE_POSITION = (e) => ({
+    x: e.offsetX,
+    y: e.offsetY,
+    width: 100,
+    height: 100
+});
