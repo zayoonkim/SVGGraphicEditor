@@ -11,14 +11,14 @@ export default class ActionGenerator {
         id: "canvas",
         type: "update",
         command: "updateCanvasColor",
-        value: newColor,
+        value: newColor
       },
       rOp: {
         id: "canvas",
         type: "update",
         command: "updateCanvasColor",
-        value: curColor,
-      },
+        value: curColor
+      }
     });
   }
 
@@ -29,15 +29,15 @@ export default class ActionGenerator {
         type: "update",
         command: "updateCanvasSize",
         width: width,
-        height: height,
+        height: height
       },
       rOp: {
         id: "canvas",
         type: "update",
         command: "updateCanvasSize",
         width: width,
-        height: height,
-      },
+        height: height
+      }
     });
   }
 
@@ -48,15 +48,32 @@ export default class ActionGenerator {
         type: "add",
         command: "insertShape",
         shapeType: shapeType,
-        position: position,
+        position: position
       },
       rOp: {
         id: "canvas",
         type: "add",
-        command: "insertShape",
+        command: "deleteShape",
         shapeType: shapeType,
-        position: position,
+        position: position
+      }
+    });
+  }
+
+  static deleteShape(shapeId) {
+    ActionManager.executeAction({
+      op: {
+        id: "canvas",
+        type: "delete",
+        command: "deleteShape",
+        shapeId: shapeId
       },
+      rOp: {
+        id: "canvas",
+        type: "insert",
+        command: "insertShape",
+        shapeId: shapeId
+      }
     });
   }
 }

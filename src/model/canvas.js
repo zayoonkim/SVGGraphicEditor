@@ -1,4 +1,6 @@
 import Shape from "./shape.js";
+import { nanoid } from 'https://cdn.skypack.dev/nanoid';
+
 
 export default class Canvas {
   constructor(canvasJson) {
@@ -57,18 +59,24 @@ export default class Canvas {
   addShapeModel(shapeType, position) {
     const shapeData = {
       type: shapeType,
-      id: `${Date.now()}`,
+      id: nanoid(),
       stroke: { color: "#000000", width: 1 },
       fill: { color: "#ffffff", opacity: 1.0 },
       transform: {
-          position: {x : position.x, y : position.y},
-          size: { width: position.width, height: position.height },
-          rotation: 0
+        position: { x: position.x, y: position.y },
+        size: { width: position.width, height: position.height },
+        rotation: 0
       },
       alignment: "center"
-  };
+    };
     this.objectList.push(new Shape(shapeData));
     this.notifyListeners("addingShape");
+  }
+
+  deleteShapeModel(shapeId) {
+    const index = this.objectList.findIndex(shape => shape.id === shapeId);
+    this.objectList.splice(index, 1);
+    this.notifyListeners("deletingShape");
   }
 
   addListener(listener) {
