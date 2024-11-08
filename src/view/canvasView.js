@@ -2,6 +2,7 @@ import ShapeView from "./shapeView.js";
 import Connector from "../controller/Connector.js";
 import { DEFAULT_SHAPE_POSITION } from "../constant.js";
 import ActionGenerator from "../controller/actionGenerator.js";
+import Selector from "../controller/selector.js";
 
 export default class CanvasView {
     constructor(canvasModel) {
@@ -13,6 +14,7 @@ export default class CanvasView {
         this.previewElement = null;
         // 모델의 상태 변화에 대한 리스너
         this.canvasModel.addListener(this.update.bind(this));
+        this.resgisterEvent();
         this.render();
 
     }
@@ -22,6 +24,7 @@ export default class CanvasView {
         const canvasElement = document.createElementNS("http://www.w3.org/2000/svg", "svg");
         canvasElement.setAttribute("width", this.canvasModel.width);
         canvasElement.setAttribute("height", this.canvasModel.height);
+        canvasElement.setAttribute("id", "canvas");
         canvasElement.style.backgroundColor = this.canvasModel.fillColor;
         return canvasElement;
     }
@@ -38,14 +41,22 @@ export default class CanvasView {
         if (!this.previewElement) {
             this.previewElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             this.previewElement.setAttribute("fill", "#ffffff");
-            this.previewElement.setAttribute("fill-opacity", "1");
+            this.previewElement.setAttribute("fill-opacity", "0");
             this.previewElement.setAttribute("stroke", "black");
+            this.previewElement.setAttribute("id", "previewElement");
             this.canvasElement.appendChild(this.previewElement);
         }
         this.previewElement.setAttribute("x", position.x);
         this.previewElement.setAttribute("y", position.y);
         this.previewElement.setAttribute("width", position.width);
         this.previewElement.setAttribute("height", position.height);
+    }
+
+    removePreview() {
+        if (this.previewElement) {
+            this.canvasElement.removeChild(this.previewElement);
+            this.previewElement = null;
+        }
     }
 
     // changeType에 따른 업데이트 처리
@@ -56,7 +67,19 @@ export default class CanvasView {
             this.updateCanvasSize(canvas.width, canvas.height);
         } else if (changeType === "addingShape") {
             this.addShapeToCanvas();
+        } else if (changeType === "deletingShape") {
+            this.deleteShapeOfCanvas();
         }
+    }
+
+    resgisterEvent() {
+        window.addEventListener('keydown', (e) => {
+            const selectedShape = Selector.getSelectedShape();
+            if (e.key === 'Backspace' && selectedShape !== undefined) {
+                ActionGenerator.deleteShape(selectedShape.id);
+                Selector.clearSelection();
+            }
+        });
     }
 
     setDrawingShapeType(shapeType) {
@@ -80,6 +103,7 @@ export default class CanvasView {
         this.isDragging = false;
         this.startX = e.offsetX;
         this.startY = e.offsetY;
+
     }
 
     // 드래그 중의 preview shape 
@@ -89,14 +113,12 @@ export default class CanvasView {
         }
         const currentX = e.offsetX;
         const currentY = e.offsetY;
-        const width = Math.abs(currentX - this.startX);
-        const height = Math.abs(currentY - this.startY);
         this.isDragging = true;
         this.renderPreview({
             x: Math.min(this.startX, currentX),
             y: Math.min(this.startY, currentY),
-            width,
-            height
+            width: Math.abs(currentX - this.startX),
+            height: Math.abs(currentY - this.startY)
         });
     }
 
@@ -104,23 +126,16 @@ export default class CanvasView {
         if (!this.isDrawing) {
             return;
         }
-        const previewElement = document.getElementById("previewElement");
-        if (previewElement) {
-            this.canvasElement.removeChild(previewElement);
-        }
         this.canvasElement.style.cursor = "default";
         if (this.isDragging) {
             let position = this.calculatePosition(e);
-
-            console.log("커스텀 도형")
             ActionGenerator.insertShape(this.selectedShapeType, position);
         } else {
-            console.log("클릭 - 기본 도형")
             let position = DEFAULT_SHAPE_POSITION(e);
-            
             ActionGenerator.insertShape(this.selectedShapeType, position);
         }
-        // 초기화
+        //도형 Preview 삭제 및 초기화
+        this.removePreview();
         this.isDrawing = false;
         this.isDragging = false;
         this.selectedShapeType = null;
@@ -131,7 +146,7 @@ export default class CanvasView {
             x: Math.min(this.startX, e.offsetX),
             y: Math.min(this.startY, e.offsetY),
             width: Math.abs(e.offsetX - this.startX),
-            height: Math.abs(e.offsetY - this.startY),
+            height: Math.abs(e.offsetY - this.startY)
         };
     }
 
@@ -151,11 +166,19 @@ export default class CanvasView {
     }
     // canvas -> 모델에 도형 추가 시 실행
     addShapeToCanvas() {
-        console.log(this.canvasModel.objectList)
         if (this.canvasModel.objectList) {
             const lastShape = this.canvasModel.objectList.at(-1);
             const shapeElement = new ShapeView(lastShape);
             this.canvasElement.appendChild(shapeElement.createSVGElement());
         }
     }
+
+    deleteShapeOfCanvas() {
+        const selectedShape = Selector.getSelectedShape();
+        const shapeElement = document.getElementById(selectedShape.id);
+        if (shapeElement) {
+            this.canvasElement.removeChild(shapeElement);
+        }
+    }
 }
+

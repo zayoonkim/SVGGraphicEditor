@@ -1,8 +1,3 @@
-// Connector = 
-// UI -> core(model)
-// core(model - >    )
-
-import Canvas from "../model/canvas.js";
 import Core from "./core.js";
 
 // UI <-> Core 간 통신모듈

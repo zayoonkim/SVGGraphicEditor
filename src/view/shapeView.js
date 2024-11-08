@@ -1,3 +1,4 @@
+import ActionGenerator from "../controller/actionGenerator.js";
 import Selector from "../controller/selector.js";
 
 export default class ShapeView {
@@ -25,8 +26,19 @@ export default class ShapeView {
         element.setAttribute("id", this.shape.id); 
         element.addEventListener("click", () => {
             Selector.setSelectedShape(this.shape.id);
+
+        });
+        element.addEventListener("mouseenter", () => {
+            element.setAttribute("stroke", "#4F80FF");
+            element.setAttribute("stroke-width", 1);
         });
 
+        element.addEventListener("mouseleave", () => {
+            element.setAttribute("stroke", this.shape.stroke.color);
+            element.setAttribute("stroke-width", this.shape.stroke.width);
+        });
+        
         return element;
     }
+
 }

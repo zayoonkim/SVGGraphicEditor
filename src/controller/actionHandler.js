@@ -16,6 +16,9 @@ import Connector from "./Connector.js";
 
     static insertShape(op) {
         Connector.getCanvas().addShapeModel(op.shapeType, op.position);
-      }
-      
+    }
+
+    static deleteShape(op) {
+        Connector.getCanvas().deleteShapeModel(op.shapeId);
+    }
 }
