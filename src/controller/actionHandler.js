@@ -14,6 +14,10 @@ import Connector from "./Connector.js";
         // Connector.getCanvas.updateShapeColor(op.value);
     }
 
+    static updateShapePosition(op) {
+        Connector.getShapeById(op.shapeId).updateShapePosition(op.shapeId, op.newPosition);
+    }
+
     static insertShape(op) {
         Connector.getCanvas().addShapeModel(op.shapeType, op.position);
     }

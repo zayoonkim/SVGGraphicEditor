@@ -7,7 +7,6 @@ import CanvasView from "../view/canvasView.js";
 export default class Core {
     static registerJson(canvas) {
         this.canvas = new Canvas(canvas);
-        // this.uiView = new UIView();
         this.canvasView = new CanvasView(this.canvas);
     }
 
@@ -16,9 +15,13 @@ export default class Core {
             return Core.canvas;
         },
 
+        getShapeById(id) {
+            return Core.canvas.getShapeById(id);
+        },
+
         getCanvasSizeValue() {
             return {
-                width: Core.canvas.width, 
+                width: Core.canvas.width,
                 height: Core.canvas.height
             };
         },
@@ -27,11 +30,15 @@ export default class Core {
             return Core.canvas.fillColor;
         },
     };
-    
+
     static View = {
         setDrawingShapeType(shapeType) {
             Core.canvasView.setDrawingShapeType(shapeType);
+        },
+
+        updateShapePosition(shapeId) {
+            Core.canvasView.updateShapePosition(shapeId);
         }
     };
-    
+
 }

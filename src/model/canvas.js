@@ -79,6 +79,11 @@ export default class Canvas {
     this.notifyListeners("deletingShape");
   }
 
+  getShapeById(shapeId) {
+    const shape = this.objectList.find(shape => shape.id === shapeId);
+    return shape;
+  }
+  
   addListener(listener) {
     this.listeners.push(listener);
   }
