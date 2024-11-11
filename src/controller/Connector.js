@@ -6,6 +6,10 @@ export default class Connector {
         return Core.Model.getCanvas();
     }
 
+    static getShapeById(id) {
+        return Core.Model.getShapeById(id);
+    }
+
     static getCanvasSize() {
         return Core.Model.getCanvasSizeValue();
     }
@@ -22,4 +26,8 @@ export default class Connector {
         Core.View.setDrawingShapeType(shapeType);
     }
 
+    // ShapeModel <-> View
+    static notifyShapeUpdate(shapeId) {
+        Core.View.updateShapePosition(shapeId);
+    }
 }

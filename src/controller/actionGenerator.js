@@ -76,4 +76,23 @@ export default class ActionGenerator {
       }
     });
   }
+
+  static updateShapePosition(shapeId, newPosition) {
+    ActionManager.executeAction({
+      op: {
+        id: "updateshape",
+        type: "update",
+        command: "updateShapePosition",
+        shapeId: shapeId,
+        newPosition: newPosition
+      },
+      rOp: {
+        id: "updateshape",
+        type: "update",
+        command: "updateShapePosition",
+        shapeId: shapeId,
+        newPosition: newPosition
+      },
+    });
+  }
 }
