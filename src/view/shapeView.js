@@ -1,4 +1,5 @@
 import ActionGenerator from "../controller/actionGenerator.js";
+import Connector from "../controller/Connector.js";
 import Selector from "../controller/selector.js";
 
 export default class ShapeView {
@@ -7,13 +8,24 @@ export default class ShapeView {
     this.isDragging = false;
     this.startclientX = 0;
     this.startclientY = 0;
+    this.previewShape = null;
     this.x = 0;
     this.y = 0;
+    this.shape.addListener(this.update.bind(this));
+  }
+
+  // changeType에 따른 업데이트 처리
+  update(shape, changeType) {
+    if (changeType === "position") {
+      this.updatePosition();
+      this.createResizeHandles();
+    }
   }
 
   createSVGElement() {
     const canvasElement = document.getElementById("canvas");
     let element;
+
     if (this.shape.type === "rectangle") {
       element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
       element.setAttribute("x", this.shape.position.x || 0);
@@ -21,7 +33,7 @@ export default class ShapeView {
       element.setAttribute("width", this.shape.size.width);
       element.setAttribute("height", this.shape.size.height);
       element.setAttribute("fill", this.shape.fillcolor);
-      element.setAttribute("opacity", this.shape.fillopacity);
+      element.setAttribute("opacity", this.shape.fillOpacity);
       element.setAttribute("stroke", this.shape.stroke.color);
       element.setAttribute("stroke-width", this.shape.stroke.width);
     }
@@ -46,6 +58,8 @@ export default class ShapeView {
       this.startclientY = e.clientY;
       Selector.setSelectedShape(this.shape.id);
       this.createResizeHandles();
+      // 이동 시 미리보기
+      this.createPreviewShape(e.clientX, e.clientY);
     });
 
     canvasElement.addEventListener("mousemove", (e) => {
@@ -58,15 +72,12 @@ export default class ShapeView {
       const dx = e.clientX - this.startclientX;
       const dy = e.clientY - this.startclientY;
 
-      this.shape.position.x += dx;
-      this.shape.position.y += dy;
+      const newX = this.shape.position.x + dx;
+      const newY = this.shape.position.y + dy;
 
-      // 드래그 중의 도형 위치 업데이트
-      e.target.setAttribute("x", this.shape.position.x);
-      e.target.setAttribute("y", this.shape.position.y);
+      this.updatePreviewShapePosition(newX, newY);
+      element.setAttribute("visibility", "hidden");
 
-      this.startclientX = e.clientX;
-      this.startclientY = e.clientY;
       Selector.clearSelection();
     });
 
@@ -74,14 +85,57 @@ export default class ShapeView {
       if (!this.isDragging) {
         return;
       }
-      const newPosition = this.shape.position;
-      this.createResizeHandles(this.shape);
+      const dx = e.clientX - this.startclientX;
+      const dy = e.clientY - this.startclientY;
+
+      const finalX = this.shape.position.x + dx;
+      const finalY = this.shape.position.y + dy;
+
+      const newPosition = { x: finalX, y: finalY };
+
+      element.setAttribute("visibility", "visible");
+      this.removePreview();
+
       // 위치 이동 액션 생성
       ActionGenerator.updateShapePosition(this.shape.id, newPosition);
       this.isDragging = false;
     });
 
     return element;
+  }
+
+
+  // 도형 드래그 미리보기 생성
+  createPreviewShape(x, y) {
+    const canvasElement = document.getElementById("canvas");
+
+    if (!this.previewShape) {
+      this.previewShape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      this.previewShape.setAttribute("fill", this.shape.fillcolor);
+      this.previewShape.setAttribute("opacity", this.shape.fillOpacity);
+      this.previewShape.setAttribute("stroke", this.shape.stroke.color);
+      this.previewShape.setAttribute("stroke-width", this.shape.stroke.width);
+      canvasElement.appendChild(this.previewShape);
+    }
+
+    this.previewShape.setAttribute("x", this.shape.position.x);
+    this.previewShape.setAttribute("y", this.shape.position.y);
+    this.previewShape.setAttribute("width", this.shape.size.width);
+    this.previewShape.setAttribute("height", this.shape.size.height);
+  }
+
+  updatePreviewShapePosition(x, y) {
+    if (this.previewShape) {
+      this.previewShape.setAttribute("x", x);
+      this.previewShape.setAttribute("y", y);
+    }
+  }
+
+  removePreview() {
+    if (this.previewShape) {
+      this.previewShape.remove();
+      this.previewShape = null;
+    }
   }
 
   // resizeHandle 렌더링
@@ -104,5 +158,14 @@ export default class ShapeView {
 
       canvasElement.appendChild(handleElement);
     });
+  }
+
+  updatePosition() {
+    const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId());
+    const shapeElement = document.getElementById(selectedShape.id);
+    if (shapeElement) {
+      shapeElement.setAttribute("x", selectedShape.position.x);
+      shapeElement.setAttribute("y", selectedShape.position.y);
+    }
   }
 }

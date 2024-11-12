@@ -8,7 +8,6 @@ export default class Canvas {
     this.objectList = [];
     this.listeners = [];
     this.initializeProps(canvasJson);
-    Canvas.instance = this;
   }
 
   initializeProps(canvasJson) {
@@ -26,10 +25,6 @@ export default class Canvas {
         this.objectList.push(new Text(object.text));
       }
     });
-  }
-
-  static getInstance() {
-    return Canvas.instance;
   }
 
   // getter - setters
@@ -76,7 +71,7 @@ export default class Canvas {
   deleteShapeModel(shapeId) {
     const index = this.objectList.findIndex(shape => shape.id === shapeId);
     this.objectList.splice(index, 1);
-    this.notifyListeners("deletingShape");
+    this.notifyListeners("deletingShape", shapeId);
   }
 
   getShapeById(shapeId) {
@@ -89,7 +84,7 @@ export default class Canvas {
   }
 
   // 구독중인 View에 변화를 알림
-  notifyListeners(changeType) {
-    this.listeners.forEach((listener) => listener(this, changeType));
+  notifyListeners(changeType, shapeId) {
+    this.listeners.forEach((listener) => listener(this, changeType, shapeId));
   }
 }
