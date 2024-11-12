@@ -3,8 +3,8 @@ import Connector from "./Connector.js";
   export default class ActionHandler {
     static updateCanvasColor(op) {
         Connector.getCanvas().updateColor(op.value);
-        
     }
+
     static updateCanvasSize(op) {
         Connector.getCanvas().updateSize(op.width, op.height);
     }
@@ -15,7 +15,7 @@ import Connector from "./Connector.js";
     }
 
     static updateShapePosition(op) {
-        Connector.getShapeById(op.shapeId).updateShapePosition(op.shapeId, op.newPosition);
+        Connector.getShapeById(op.shapeId).updatePosition(op.newPosition);
     }
 
     static insertShape(op) {

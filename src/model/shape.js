@@ -4,6 +4,7 @@ import Selector from "../controller/selector.js";
 export default class Shape {
     constructor(shapeData) {
         this.initializeProps(shapeData);
+        this.listeners = [];
     }
 
     initializeProps(shapeData) {
@@ -17,9 +18,11 @@ export default class Shape {
         this.rotation(shapeData.transform.rotation);
         this.alignment(shapeData.alignment);
     }
+
     updateShapeColor(newFillColor) {
         this.fillcolor(newFillColor);
     }
+
     type(newType) {
         return newType == null ? this.type : (this.type = newType);
     }
@@ -56,8 +59,17 @@ export default class Shape {
         return newAlignment == null ? this.alignment : (this.alignment = newAlignment);
     }
 
-    updateShapePosition(id, newPosition) {
-        Connector.notifyShapeUpdate(id); // Shape의 위치가 변경되었음을 알림
+    updatePosition(newPosition) {
+        this.position = newPosition;
+        this.notifyListeners("position");
+    }
+
+    addListener(listener) {
+        this.listeners.push(listener);
+    }
+
+    notifyListeners(changeType) {
+        this.listeners.forEach((listener) => listener(this, changeType));
     }
 }
 

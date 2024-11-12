@@ -65,7 +65,7 @@ export default class CanvasView {
   }
 
   // changeType에 따른 업데이트 처리
-  update(canvas, changeType) {
+  update(canvas, changeType, shapeId) {
     if (changeType === "color") {
       this.updateCanvasColor(canvas.fillColor);
     } else if (changeType === "size") {
@@ -73,10 +73,9 @@ export default class CanvasView {
     } else if (changeType === "addingShape") {
       this.addShapeToCanvas();
     } else if (changeType === "deletingShape") {
-      this.deleteShapeOfCanvas();
-    } else if (changeType === "movingShape") {
-      this.moveShapeOfCanvas();
+      this.deleteShapeOfCanvas(shapeId);
     }
+    
   }
 
   resgisterDeleteEvent() {
@@ -196,19 +195,12 @@ export default class CanvasView {
     }
   }
 
-  deleteShapeOfCanvas() {
-    const shapeElement = document.getElementById(Selector.getSelectedShapeId());
+  deleteShapeOfCanvas(shapeId) {
+    const shapeElement = document.getElementById(shapeId);
     if (shapeElement) {
       this.canvasElement.removeChild(shapeElement);
     }
   }
 
-  updateShapePosition() {
-    const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId());
-    const shapeElement = document.getElementById(selectedShape.id);
-    if (shapeElement) {
-      shapeElement.setAttribute("x", selectedShape.position.x);
-      shapeElement.setAttribute("y", selectedShape.position.y);
-    }
-  }
+
 }

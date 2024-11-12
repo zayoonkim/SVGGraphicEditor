@@ -1,6 +1,7 @@
 import Canvas from "../model/canvas.js";
 import UIView from "../view/uiView.js";
 import CanvasView from "../view/canvasView.js";
+import ShapeView from "../view/shapeView.js";
 
 // Model / View 영역
 
@@ -37,7 +38,7 @@ export default class Core {
         },
 
         updateShapePosition(shapeId) {
-            Core.canvasView.updateShapePosition(shapeId);
+            Core.shapeView.updateShapePosition(shapeId);
         }
     };
 
