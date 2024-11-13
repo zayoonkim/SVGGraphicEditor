@@ -8,55 +8,56 @@ export default class Shape {
     }
 
     initializeProps(shapeData) {
-        this.type(shapeData.type);
-        this.id(shapeData.id);
-        this.stroke(shapeData.stroke); // color, width
-        this.fillcolor(shapeData.fill.color);
-        this.fillopacity(shapeData.fill.opacity);
-        this.position(shapeData.transform.position); // x,y
-        this.size(shapeData.transform.size); // width, height
-        this.rotation(shapeData.transform.rotation);
-        this.alignment(shapeData.alignment);
+        this._id = shapeData.id;
+        this._type = shapeData.type;
+        this._stroke = shapeData.stroke; // color, width
+        this._fillcolor = shapeData.fill.color;
+        this._fillopacity = shapeData.fill.opacity;
+        this._position = shapeData.transform.position; // x,y
+        this._size = shapeData.transform.size; // width, height
+        this._rotation = shapeData.transform.rotation;
+        this._alignment = shapeData.alignment;
     }
 
     updateShapeColor(newFillColor) {
         this.fillcolor(newFillColor);
     }
 
-    type(newType) {
-        return newType == null ? this.type : (this.type = newType);
+    getId() {
+        return this._id;
     }
 
-    id(newId) {
-        return newId == null ? this.id : (this.id = newId);
+    // getter - setters
+    type(newType) {
+        return newType == null ? this._type : (this._type = newType);
     }
 
     stroke(newStroke) {
-        return newStroke == null ? this.stroke : (this.stroke = newStroke);
+        return newStroke == null ? this._stroke : (this._stroke = newStroke);
     }
 
     fillcolor(newFillColor) {
-        return newFillColor == null ? this.fillcolor : (this.fillcolor = newFillColor);
+        return newFillColor == null ? this._fillcolor : (this._fillcolor = newFillColor);
     }
 
     fillopacity(newFillOpacity) {
-        return newFillOpacity == null ? this.fillopacity : (this.fillopacity = newFillOpacity);
+        return newFillOpacity == null ? this._fillopacity : (this._fillopacity = newFillOpacity);
     }
 
     position(newPosition) {
-        return newPosition == null ? this.position : (this.position = newPosition);
+        return newPosition == null ? this._position : (this._position = newPosition);
     }
 
     size(newSize) {
-        return newSize == null ? this.size : (this.size = newSize);
+        return newSize == null ? this._size : (this._size = newSize);
     }
 
     rotation(newRotation) {
-        return newRotation == null ? this.rotation : (this.rotation = newRotation);
+        return newRotation == null ? this._rotation : (this._rotation = newRotation);
     }
 
     alignment(newAlignment) {
-        return newAlignment == null ? this.alignment : (this.alignment = newAlignment);
+        return newAlignment == null ? this._alignment : (this._alignment = newAlignment);
     }
 
     updatePosition(newPosition) {
