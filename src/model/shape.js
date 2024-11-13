@@ -12,7 +12,7 @@ export default class Shape {
         this._type = shapeData.type;
         this._stroke = shapeData.stroke; // color, width
         this._fillcolor = shapeData.fill.color;
-        this._fillopacity = shapeData.fill.opacity;
+        this._fillOpacity = shapeData.fill.opacity;
         this._position = shapeData.transform.position; // x,y
         this._size = shapeData.transform.size; // width, height
         this._rotation = shapeData.transform.rotation;
@@ -41,8 +41,8 @@ export default class Shape {
         return newFillColor == null ? this._fillcolor : (this._fillcolor = newFillColor);
     }
 
-    fillopacity(newFillOpacity) {
-        return newFillOpacity == null ? this._fillopacity : (this._fillopacity = newFillOpacity);
+    fillOpacity(newFillOpacity) {
+        return newFillOpacity == null ? this._fillOpacity : (this._fillOpacity = newFillOpacity);
     }
 
     position(newPosition) {
@@ -62,8 +62,14 @@ export default class Shape {
     }
 
     updatePosition(newPosition) {
-        this.position = newPosition;
+        this.position(newPosition);
         this.notifyListeners("position");
+    }
+    
+    resizeShape(newSize, newPosition) {
+        this.position(newPosition);
+        this.size(newSize)
+        this.notifyListeners("size");
     }
 
     addListener(listener) {
@@ -71,7 +77,7 @@ export default class Shape {
     }
 
     notifyListeners(changeType) {
-        this.listeners.forEach((listener) => listener(this, changeType));
+        this.listeners.forEach((listener) => listener(changeType));
     }
 }
 

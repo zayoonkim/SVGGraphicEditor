@@ -22,13 +22,13 @@ export default class Core {
 
         getCanvasSizeValue() {
             return {
-                width: Core.canvas.width,
-                height: Core.canvas.height
+                width: Core.canvas.width(),
+                height: Core.canvas.height()
             };
         },
 
         getCanvasColorValue() {
-            return Core.canvas.fillColor;
+            return Core.canvas.fillColor();
         },
     };
 

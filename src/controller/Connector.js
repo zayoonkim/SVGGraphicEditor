@@ -18,10 +18,6 @@ export default class Connector {
         return Core.Model.getCanvasColorValue();
     }
 
-    static insertShape(shapeType, position) {
-        Core.Model.insertNewShape(shapeType, position);
-    }
-
     static setDrawingShapeType(shapeType) {
         Core.View.setDrawingShapeType(shapeType);
     }

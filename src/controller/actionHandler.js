@@ -18,6 +18,10 @@ import Connector from "./Connector.js";
         Connector.getShapeById(op.shapeId).updatePosition(op.newPosition);
     }
 
+    static resizeShape(op) {
+        Connector.getShapeById(op.shapeId).resizeShape(op.newSize, op.newPosition);
+    }
+
     static insertShape(op) {
         Connector.getCanvas().addShapeModel(op.shapeType, op.position);
     }

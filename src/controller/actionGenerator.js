@@ -95,4 +95,25 @@ export default class ActionGenerator {
       },
     });
   }
+
+  static resizeShape(shapeId, newSize, newPosition) {
+    ActionManager.executeAction({
+      op: {
+        id: "updateshape",
+        type: "update",
+        command: "resizeShape",
+        shapeId: shapeId,
+        newSize: newSize,
+        newPosition: newPosition
+      },
+      rOp: {
+        id: "updateshape",
+        type: "update",
+        command: "resizeShape",
+        shapeId: shapeId,
+        newSize: newSize,
+        newPosition: newPosition
+      },
+    });
+  }
 }
