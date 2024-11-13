@@ -22,12 +22,13 @@ export default class Shape {
     updateShapeColor(newFillColor) {
         this.fillcolor(newFillColor);
     }
+  
+    // getter - setters
 
     getId() {
         return this._id;
     }
 
-    // getter - setters
     type(newType) {
         return newType == null ? this._type : (this._type = newType);
     }

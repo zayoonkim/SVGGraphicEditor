@@ -81,7 +81,7 @@ export default class Canvas {
     this.objectList().splice(index, 1);
     this.notifyListeners("deletingShape", shapeId);
   }
-
+  
   getShapeById(shapeId) {
     return this.objectList().find(shape => shape.id === shapeId);
   }
