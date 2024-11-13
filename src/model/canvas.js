@@ -4,40 +4,48 @@ import { nanoid } from 'https://cdn.skypack.dev/nanoid';
 
 export default class Canvas {
   constructor(canvasJson) {
-    this.id = "canvas"; // 임시 canvas id
-    this.objectList = [];
-    this.listeners = [];
     this.initializeProps(canvasJson);
   }
 
   initializeProps(canvasJson) {
-    this.fillColor(canvasJson.fill?.color);
-    this.width(canvasJson.transform?.width);
-    this.height(canvasJson.transform?.height);
+    this._id = "canvas"; // 임시 canvas id
+    this._fillColor = canvasJson.fill?.color;
+    this._width = canvasJson.transform?.width;
+    this._height = canvasJson.transform?.height;
+    this._objectList = [];
+    this._listeners = [];
     this.initializeObjects(canvasJson.objectList);
   }
 
   initializeObjects(objectList) {
     objectList?.forEach((object) => {
       if (object.shape) {
-        this.objectList.push(new Shape(object.shape));
+        this._objectList.push(new Shape(object.shape));
       } else if (object.text) {
-        this.objectList.push(new Text(object.text));
+        this._objectList.push(new Text(object.text));
       }
     });
   }
 
+  getId() {
+    return this._id;
+  }
+
   // getter - setters
   fillColor(newFillColor) {
-    return newFillColor == null ? this.fillColor : (this.fillColor = newFillColor);
+    return newFillColor == null ? this._fillColor : (this._fillColor = newFillColor);
   }
 
   width(newWidth) {
-    return newWidth == null ? this.width : (this.width = newWidth);
+    return newWidth == null ? this._width : (this._width = newWidth);
   }
 
   height(newHeight) {
-    return newHeight == null ? this.height : (this.height = newHeight);
+    return newHeight == null ? this._height : (this._height = newHeight);
+  }
+
+  objectList(newObjectList) {
+    return newObjectList == null ? this._objectList : (this._objectList = newObjectList);
   }
 
   updateColor(newColor) {
@@ -64,27 +72,26 @@ export default class Canvas {
       },
       alignment: "center"
     };
-    this.objectList.push(new Shape(shapeData));
+    this.objectList().push(new Shape(shapeData));
     this.notifyListeners("addingShape");
   }
 
   deleteShapeModel(shapeId) {
-    const index = this.objectList.findIndex(shape => shape.id === shapeId);
-    this.objectList.splice(index, 1);
+    const index = this.objectList().findIndex(shape => shape.getId() === shapeId);
+    this.objectList().splice(index, 1);
     this.notifyListeners("deletingShape", shapeId);
   }
-
+  
   getShapeById(shapeId) {
-    const shape = this.objectList.find(shape => shape.id === shapeId);
-    return shape;
+    return this.objectList().find(shape => shape.id === shapeId);
   }
   
   addListener(listener) {
-    this.listeners.push(listener);
+    this._listeners.push(listener);
   }
 
   // 구독중인 View에 변화를 알림
   notifyListeners(changeType, shapeId) {
-    this.listeners.forEach((listener) => listener(this, changeType, shapeId));
+    this._listeners.forEach((listener) => listener(this, changeType, shapeId));
   }
 }
