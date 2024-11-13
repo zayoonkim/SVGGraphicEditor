@@ -16,10 +16,10 @@ export default class Selector {
   static getHandlePositions() {
     const shape = Connector.getShapeById(Selector.getSelectedShapeId());
     const handleSize = 8;
-    const x = shape.position.x;
-    const y = shape.position.y;
-    const width = shape.size.width;
-    const height = shape.size.height;
+    const x = shape.position().x;
+    const y = shape.position().y;
+    const width = shape.size().width;
+    const height = shape.size().height;
     return [
       {
         id: "nw",

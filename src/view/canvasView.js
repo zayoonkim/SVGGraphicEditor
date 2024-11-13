@@ -24,16 +24,16 @@ export default class CanvasView {
       "http://www.w3.org/2000/svg",
       "svg"
     );
-    canvasElement.setAttribute("width", this.canvasModel.width);
-    canvasElement.setAttribute("height", this.canvasModel.height);
+    canvasElement.setAttribute("width", this.canvasModel.width());
+    canvasElement.setAttribute("height", this.canvasModel.height());
     canvasElement.setAttribute("id", "canvas");
-    canvasElement.style.backgroundColor = this.canvasModel.fillColor;
+    canvasElement.style.backgroundColor = this.canvasModel.fillColor();
     return canvasElement;
   }
   
   render() {
     document.getElementById("root").appendChild(this.canvasElement);
-    this.canvasModel.objectList.forEach((object) => {
+    this.canvasModel.objectList().forEach((object) => {
       const shapeElement = new ShapeView(object);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
     });
@@ -67,9 +67,9 @@ export default class CanvasView {
   // changeType에 따른 업데이트 처리
   update(canvas, changeType, shapeId) {
     if (changeType === "color") {
-      this.updateCanvasColor(canvas.fillColor);
+      this.updateCanvasColor(canvas.fillColor());
     } else if (changeType === "size") {
-      this.updateCanvasSize(canvas.width, canvas.height);
+      this.updateCanvasSize(canvas.width(), canvas.height());
     } else if (changeType === "addingShape") {
       this.addShapeToCanvas();
     } else if (changeType === "deletingShape") {
@@ -82,7 +82,7 @@ export default class CanvasView {
     window.addEventListener("keydown", (e) => {
       const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId())
       if (e.key === "Backspace" && selectedShape !== undefined) {
-        ActionGenerator.deleteShape(selectedShape.id);
+        ActionGenerator.deleteShape(selectedShape.getId());
         Selector.clearSelection();
       }
     });
@@ -174,7 +174,7 @@ export default class CanvasView {
   // canvas -> 모델에 도형 추가 시 실행
   addShapeToCanvas() {
     if (this.canvasModel.objectList) {
-      const lastShape = this.canvasModel.objectList.at(-1);
+      const lastShape = this.canvasModel.objectList().at(-1);
       const shapeElement = new ShapeView(lastShape);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
     }
@@ -188,8 +188,8 @@ export default class CanvasView {
   }
   // canvas -> 모델에 도형 추가 시 실행
   addShapeToCanvas() {
-    if (this.canvasModel.objectList) {
-      const lastShape = this.canvasModel.objectList.at(-1);
+    if (this.canvasModel.objectList()) {
+      const lastShape = this.canvasModel.objectList().at(-1);
       const shapeElement = new ShapeView(lastShape);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
     }

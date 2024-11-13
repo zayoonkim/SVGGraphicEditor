@@ -49,13 +49,13 @@ export default class Canvas {
   }
 
   updateColor(newColor) {
-    this.fillColor = newColor;
+    this.fillColor(newColor);
     this.notifyListeners("color");
   }
 
   updateSize(width, height) {
-    this.width = width;
-    this.height = height;
+    this.width(width);
+    this.height(height);
     this.notifyListeners("size");
   }
 
@@ -83,7 +83,7 @@ export default class Canvas {
   }
   
   getShapeById(shapeId) {
-    return this.objectList().find(shape => shape.id === shapeId);
+    return this.objectList().find(shape => shape.getId() === shapeId);
   }
   
   addListener(listener) {
