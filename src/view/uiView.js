@@ -7,81 +7,23 @@ export default class UIView {
   }
 
   createToolbar() {
-    const toolbar = document.createElement("div");
-    toolbar.style.display = "flex";
-    toolbar.style.alignItems = "center";
-    toolbar.style.padding = "10px";
-    toolbar.style.border = "1px solid";
-    toolbar.style.borderColor = "lightgray";
-
     // 컬러 선택기
-    this.colorPicker = document.createElement("input");
-    this.colorPicker.type = "color";
+    this.toolbar = document.getElementById("toolbar");
+    this.colorPicker = document.getElementById("colorPicker");
     this.colorPicker.value = Connector.getCanvasColor();
 
-    const labelColor = document.createElement("label");
-    labelColor.textContent = "Canvas Color";
-    labelColor.style.marginRight = "8px";
-
-    // 크기 입력 필드
-    const labelWidth = document.createElement("label");
-    labelWidth.textContent = "Width:";
-    labelWidth.style.marginRight = "8px";
-
+    // 크기 입력
     const canvasSize = Connector.getCanvasSize();
-    this.widthInput = document.createElement("input");
-    this.widthInput.type = "number";
+    this.widthInput = document.getElementById("widthInput");
     this.widthInput.value = canvasSize.width;
-    
-    this.widthInput.style.marginRight = "8px";
 
-    const labelHeight = document.createElement("label");
-    labelHeight.textContent = "Height:";
-    labelHeight.style.marginRight = "8px";
-
-    this.heightInput = document.createElement("input");
-    this.heightInput.type = "number";
+    this.heightInput = document.getElementById("heightInput");
     this.heightInput.value = canvasSize.height;
-    this.heightInput.style.marginRight = "8px";
 
     // 확인 버튼
-    this.confirmButton = document.createElement("button");
-    this.confirmButton.textContent = "확인";
-    this.confirmButton.style.marginLeft = "8px";
+    this.confirmButton = document.getElementById("confirmButton");
 
-    // 사각형 추가 버튼(임시)
-    this.addRectangleButton = document.createElement("button");
-    this.addRectangleButton.textContent = "사각형";
-    this.addRectangleButton.id = "rectangle";
-    this.addRectangleButton.style.marginLeft = "8px";
-
-    // 타원 추가 버튼
-    this.addEllipseButton = document.createElement("button");
-    this.addEllipseButton.textContent = "타원";
-    this.addEllipseButton.id = "ellipse";
-    this.addEllipseButton.style.marginLeft = "8px";
-
-    // 삼각형 추가 버튼
-    this.addTriangleButton = document.createElement("button");
-    this.addTriangleButton.textContent = "삼각형";
-    this.addTriangleButton.id = "triangle";
-    this.addTriangleButton.style.marginLeft = "8px";
-
-    this.addTools = document.createElement("div");
-    this.addTools.append(this.addRectangleButton, this.addEllipseButton, this.addTriangleButton);
-
-    // 툴바에 추가
-    toolbar.append(
-      labelColor,
-      this.colorPicker,
-      labelWidth,
-      this.widthInput,
-      labelHeight,
-      this.heightInput,
-      this.confirmButton,
-      this.addTools
-    );
-    document.getElementById("root").appendChild(toolbar);
+    this.addTools = document.getElementById("addTools");
 
     // 이벤트 바인딩
     this.colorPicker.addEventListener("input", (event) =>
@@ -107,4 +49,19 @@ export default class UIView {
   addShape(shapeType) {
     Connector.setDrawingShapeType(shapeType);
   }
+
+  static updateColorPickerForShape(shapeId, currentColor) {
+    this.shapecolorPicker = document.getElementById('shapecolorPicker');
+    this.shapecolorPicker.value = currentColor;
+    this.shapecolorPicker.style.display = 'block';
+    this.shapecolorPicker.oninput = (event) => {
+      ActionGenerator.updateShapeColor(shapeId, event.target.value);
+    };
+  }
+
+  static updateColorPickerForCanvas() {
+    this.shapecolorPicker = document.getElementById('shapecolorPicker'); 
+    this.shapecolorPicker.style.display = 'none';
+  }
+
 }

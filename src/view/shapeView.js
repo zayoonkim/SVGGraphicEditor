@@ -19,6 +19,8 @@ export default class ShapeView {
   update(changeType) {
     if (changeType === "position" || changeType === "size") {
       this.updatePosition();
+    } else if(changeType === "color") {
+      this.updateColor();
     }
   }
 
@@ -128,6 +130,8 @@ export default class ShapeView {
     Selector.setSelectedShape(this.shape.getId());
     this.createResizeHandles();
     this.createPreviewShape(e.clientX, e.clientY);
+    Connector.setToolbarForShape(this.shape.getId());
+
   }
 
   // resizeHandle 렌더링
@@ -285,6 +289,13 @@ export default class ShapeView {
       ].join(" ");
       shapeElement.setAttribute("points", points);
     }
+  }
+
+  updateColor() {
+    const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId());
+    const shapeElement = document.getElementById(selectedShape.getId());
+
+    shapeElement.setAttribute("fill", selectedShape.fillcolor())
   }
 }
 

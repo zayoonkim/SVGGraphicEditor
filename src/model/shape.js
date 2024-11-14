@@ -19,8 +19,9 @@ export default class Shape {
         this._alignment = shapeData.alignment;
     }
 
-    updateShapeColor(newFillColor) {
+    updateColor(newFillColor) {
         this.fillcolor(newFillColor);
+        this.notifyListeners("color")
     }
   
     // getter - setters

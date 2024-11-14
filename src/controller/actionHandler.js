@@ -29,4 +29,8 @@ import Connector from "./Connector.js";
     static deleteShape(op) {
         Connector.getCanvas().deleteShapeModel(op.shapeId);
     }
+
+    static updateShapeColor(op) {
+        Connector.getShapeById(op.shapeId).updateColor(op.newColor);
+    }
 }

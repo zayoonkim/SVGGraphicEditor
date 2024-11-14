@@ -15,6 +15,7 @@ export default class CanvasView {
     // 모델의 상태 변화에 대한 리스너
     this.canvasModel.addListener(this.update.bind(this));
     this.resgisterDeleteEvent();
+    this.registerCanvasClickEvent();
     this.render();
   }
 
@@ -105,6 +106,16 @@ export default class CanvasView {
         ActionGenerator.deleteShape(selectedShape.getId());
         Selector.clearSelection();
       }
+    });
+  }
+
+  registerCanvasClickEvent() {
+    this.canvasElement.addEventListener("click", (e) => {
+      const clickedElement = e.target;
+      if (clickedElement === this.canvasElement) {
+        Selector.clearSelection();
+        Connector.setToolbarForCanvas();
+      } 
     });
   }
 
