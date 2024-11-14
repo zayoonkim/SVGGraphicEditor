@@ -30,31 +30,51 @@ export default class CanvasView {
     canvasElement.style.backgroundColor = this.canvasModel.fillColor();
     return canvasElement;
   }
-  
+
   render() {
     document.getElementById("root").appendChild(this.canvasElement);
     this.canvasModel.objectList().forEach((object) => {
+      console.log(object)
       const shapeElement = new ShapeView(object);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
     });
   }
 
   renderPreview(position) {
+    const { x, y, width, height } = position;
+
+    // previewElement가 없을 때에만 생성
     if (!this.previewElement) {
-      this.previewElement = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "rect"
-      );
+      if (this.selectedShapeType === "rectangle") {
+        this.previewElement = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      } else if (this.selectedShapeType === "ellipse") {
+        this.previewElement = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+      } else if (this.selectedShapeType === "triangle") {
+        this.previewElement = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+      }
       this.previewElement.setAttribute("fill", "#ffffff");
       this.previewElement.setAttribute("fill-opacity", "0");
       this.previewElement.setAttribute("stroke", "black");
-      this.previewElement.setAttribute("id", "previewElement");
       this.canvasElement.appendChild(this.previewElement);
     }
-    this.previewElement.setAttribute("x", position.x);
-    this.previewElement.setAttribute("y", position.y);
-    this.previewElement.setAttribute("width", position.width);
-    this.previewElement.setAttribute("height", position.height);
+    if (this.selectedShapeType === "rectangle") {
+      this.previewElement.setAttribute("x", x);
+      this.previewElement.setAttribute("y", y);
+      this.previewElement.setAttribute("width", width);
+      this.previewElement.setAttribute("height", height);
+    } else if (this.selectedShapeType === "ellipse") {
+      this.previewElement.setAttribute("cx", x + width / 2);
+      this.previewElement.setAttribute("cy", y + height / 2);
+      this.previewElement.setAttribute("rx", width / 2);
+      this.previewElement.setAttribute("ry", height / 2);
+    } else if (this.selectedShapeType === "triangle") {
+      const points = [
+        `${x + width / 2},${y}`,
+        `${x},${y + height}`,
+        `${x + width},${y + height}`
+      ].join(" ");
+      this.previewElement.setAttribute("points", points);
+    }
   }
 
   removePreview() {
@@ -75,7 +95,7 @@ export default class CanvasView {
     } else if (changeType === "deletingShape") {
       this.deleteShapeOfCanvas(shapeId);
     }
-    
+
   }
 
   resgisterDeleteEvent() {

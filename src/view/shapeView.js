@@ -25,20 +25,47 @@ export default class ShapeView {
   createSVGElement() {
     const canvasElement = document.getElementById("canvas");
     const shape = this.shape;
-    if (shape.type() === "rectangle") {
-      this.element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      this.element.setAttribute("x", shape.position().x);
-      this.element.setAttribute("y", shape.position().y);
-      this.element.setAttribute("width", shape.size().width);
-      this.element.setAttribute("height", shape.size().height);
-      this.element.setAttribute("fill", shape.fillcolor());
-      this.element.setAttribute("opacity", shape.fillOpacity());
-      this.element.setAttribute("stroke", shape.stroke().color);
-      this.element.setAttribute("stroke-width", shape.stroke().width);
-    }
-    this.element.setAttribute("id", this.shape.getId());
-    if (!this.element) return;
+    let element;
 
+    switch(shape.type()) {
+      case "rectangle":
+        element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+        element.setAttribute("x", shape.position().x);
+        element.setAttribute("y", shape.position().y);
+        element.setAttribute("width", shape.size().width);
+        element.setAttribute("height", shape.size().height);
+        break;
+
+      case "ellipse":
+        element = document.createElementNS("http://www.w3.org/2000/svg", "ellipse");
+        element.setAttribute("cx", shape.position().x + shape.size().width / 2);
+        element.setAttribute("cy", shape.position().y + shape.size().height / 2);
+        element.setAttribute("rx", shape.size().width / 2);
+        element.setAttribute("ry", shape.size().height / 2);
+        break;
+
+      case "triangle":
+        element = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+        const x = shape.position().x;
+        const y = shape.position().y;
+        const width = shape.size().width;
+        const height = shape.size().height;
+        const points = [
+          `${x + width / 2},${y}`,
+          `${x},${y + height}`,
+          `${x + width},${y + height}`
+        ].join(" ");
+        element.setAttribute("points", points);
+        break;
+    }
+    this.element = element;
+    // 공통 속성
+    this.element.setAttribute("id", this.shape.getId());
+    this.element.setAttribute("fill", shape.fillcolor());
+    this.element.setAttribute("opacity", shape.fillOpacity());
+    this.element.setAttribute("stroke", shape.stroke().color);
+    this.element.setAttribute("stroke-width", shape.stroke().width);
+    
     this.element.addEventListener("mouseenter", () => {
       this.element.setAttribute("stroke", "#4F80FF");
       this.element.setAttribute("stroke-width", 1);
@@ -75,6 +102,7 @@ export default class ShapeView {
       if (this.isDragging) {
         const dx = e.clientX - this.startclientX;
         const dy = e.clientY - this.startclientY;
+        canvasElement.appendChild(this.element);
 
         const finalX = shape.position().x + dx;
         const finalY = shape.position().y + dy;
@@ -193,35 +221,37 @@ export default class ShapeView {
     this.createResizeHandles();
   }
 
-  // 도형 미리보기 로직
-  createPreviewShape(x, y) {
-    const shape = this.shape;
+  createPreviewShape() {
     const canvasElement = document.getElementById("canvas");
-    if (!this.previewShape) {
-      this.previewShape = document.createElementNS("http://www.w3.org/2000/svg", "rect");
-      this.previewShape.setAttribute("fill", shape.fillcolor());
-      this.previewShape.setAttribute("opacity", shape.fillOpacity());
-      this.previewShape.setAttribute("stroke", shape.stroke().color);
-      this.previewShape.setAttribute("stroke-width", shape.stroke().width);
-      canvasElement.appendChild(this.previewShape);
-    }
-
-    this.previewShape.setAttribute("x", shape.position().x);
-    this.previewShape.setAttribute("y", shape.position().y);
-    this.previewShape.setAttribute("width", shape.size().width);
-    this.previewShape.setAttribute("height", shape.size().height);
-
+    this.previewShape = document.createElementNS("http://www.w3.org/2000/svg", this.element.tagName);
+    canvasElement.appendChild(this.previewShape);
+    this.updatePreviewShapePosition(
+      this.shape.position().x,
+      this.shape.position().y,
+      this.shape.size().width,
+      this.shape.size().height
+    );
   }
 
   updatePreviewShapePosition(x, y, width, height) {
     const preview = this.previewShape;
-    if (preview) {
+    if (this.shape.type() === "ellipse") {
+      preview.setAttribute("cx", x + width / 2);
+      preview.setAttribute("cy", y + height / 2);
+      preview.setAttribute("rx", width / 2);
+      preview.setAttribute("ry", height / 2);
+    } else if (this.shape.type() === "triangle") {
+      const points = `${x + width / 2},${y} ${x},${y + height} ${x + width},${y + height}`;
+      preview.setAttribute("points", points);
+    } else {
       preview.setAttribute("x", x);
       preview.setAttribute("y", y);
       preview.setAttribute("width", width);
       preview.setAttribute("height", height);
     }
+    preview.setAttribute("fill", this.shape.fillcolor())
   }
+
 
   removePreview() {
     if (this.previewShape) {
@@ -234,11 +264,26 @@ export default class ShapeView {
   updatePosition() {
     const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId());
     const shapeElement = document.getElementById(selectedShape.getId());
-    if (shapeElement) {
-      shapeElement.setAttribute("x", selectedShape.position().x);
-      shapeElement.setAttribute("y", selectedShape.position().y);
-      shapeElement.setAttribute("width", selectedShape.size().width);
-      shapeElement.setAttribute("height", selectedShape.size().height);
+    const { x, y } = selectedShape.position();
+    const { width, height } = selectedShape.size();
+
+    if (selectedShape.type() === "rectangle") {
+      shapeElement.setAttribute("x", x);
+      shapeElement.setAttribute("y", y);
+      shapeElement.setAttribute("width", width);
+      shapeElement.setAttribute("height", height);
+    } else if (selectedShape.type() === "ellipse") {
+      shapeElement.setAttribute("cx", x + width / 2);
+      shapeElement.setAttribute("cy", y + height / 2);
+      shapeElement.setAttribute("rx", width / 2);
+      shapeElement.setAttribute("ry", height / 2);
+    } else if (selectedShape.type() === "triangle") {
+      const points = [
+        `${x + width / 2},${y}`, 
+        `${x},${y + height}`, 
+        `${x + width},${y + height}`
+      ].join(" ");
+      shapeElement.setAttribute("points", points);
     }
   }
 }
