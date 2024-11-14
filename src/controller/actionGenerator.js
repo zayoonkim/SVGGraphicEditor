@@ -113,7 +113,26 @@ export default class ActionGenerator {
         shapeId: shapeId,
         newSize: newSize,
         newPosition: newPosition
+      }
+    });
+  }
+
+  static updateShapeColor(shapeId, newColor) {
+    ActionManager.executeAction({
+      op: {
+        id: "updateshape",
+        type: "update",
+        command: "updateShapeColor",
+        shapeId: shapeId,
+        newColor: newColor
       },
+      rOp: {
+        id: "updateshape",
+        type: "update",
+        command: "updateShapeColor",
+        shapeId: shapeId,
+        newColor: newColor
+      }
     });
   }
 }

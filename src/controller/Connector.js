@@ -1,4 +1,5 @@
 import Core from "./core.js";
+import UIView from "../view/uiView.js";
 
 // UI <-> Core 간 통신모듈
 export default class Connector {
@@ -13,7 +14,7 @@ export default class Connector {
     static getCanvasSize() {
         return Core.Model.getCanvasSizeValue();
     }
-    
+
     static getCanvasColor() {
         return Core.Model.getCanvasColorValue();
     }
@@ -22,8 +23,19 @@ export default class Connector {
         Core.View.setDrawingShapeType(shapeType);
     }
 
-    // ShapeModel <-> View
-    static notifyShapeUpdate(shapeId) {
-        Core.View.updateShapePosition(shapeId);
+    static getShapeColor() {
+        Core.View.setDrawingShapeType(shapeType);
     }
+
+    static setToolbarForShape(shapeId) {
+        const shape = this.getShapeById(shapeId);
+        if (shape) {
+            UIView.updateColorPickerForShape(shapeId, shape.fillcolor());
+        }
+    }
+
+    static setToolbarForCanvas() {
+        UIView.updateColorPickerForCanvas();
+    }
+
 }
