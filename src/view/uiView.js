@@ -49,19 +49,19 @@ export default class UIView {
     this.confirmButton.textContent = "확인";
     this.confirmButton.style.marginLeft = "8px";
 
-    // shape 추가 버튼(임시)
+    // 사각형 추가 버튼(임시)
     this.addRectangleButton = document.createElement("button");
     this.addRectangleButton.textContent = "사각형";
     this.addRectangleButton.id = "rectangle";
     this.addRectangleButton.style.marginLeft = "8px";
 
-    // TODO : 타원 추가
+    // 타원 추가 버튼
     this.addEllipseButton = document.createElement("button");
     this.addEllipseButton.textContent = "타원";
     this.addEllipseButton.id = "ellipse";
     this.addEllipseButton.style.marginLeft = "8px";
 
-    // TODO : 삼각형 추가
+    // 삼각형 추가 버튼
     this.addTriangleButton = document.createElement("button");
     this.addTriangleButton.textContent = "삼각형";
     this.addTriangleButton.id = "triangle";
