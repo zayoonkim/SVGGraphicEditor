@@ -135,4 +135,62 @@ export default class ActionGenerator {
       }
     });
   }
+
+  static insertText(textValue, textPosition) {
+    ActionManager.executeAction({
+      op: {
+        id: "insertText",
+        type: "update",
+        command: "insertText",
+        textValue: textValue,
+        textPosition: textPosition,
+      },
+      rOp: {
+        id: "insertText",
+        type: "update",
+        command: "insertText",
+        textValue: textValue,
+        textPosition: textPosition,
+      },
+    });
+  }
+
+  static updateTextPosition(textId, newPosition) {
+    ActionManager.executeAction({
+      op: {
+        id: "moveText",
+        type: "update",
+        command: "moveText",
+        textId: textId,
+        newPosition: newPosition,
+      },
+      rOp: {
+        id: "moveText",
+        type: "update",
+        command: "moveText",
+        textId: textId,
+        newPosition: newPosition,
+      },
+    });
+  }
+
+  static updateTextContent(textId, newText) {
+    ActionManager.executeAction({
+      op: {
+        id: "editText",
+        type: "update",
+        command: "editText",
+        textId: textId,
+        newText: newText,
+      },
+      rOp: {
+        id: "editText",
+        type: "update",
+        command: "editText",
+        textId: textId,
+        newText: newText,
+      },
+    });
+  }
+
 }

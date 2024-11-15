@@ -1,6 +1,7 @@
 import ShapeView from "./shapeView.js";
+import TextView from "./textView.js";
 import Connector from "../controller/Connector.js";
-import { DEFAULT_SHAPE_POSITION } from "../constant.js";
+import { DEFAULT_SHAPE_POSITION, DEFAULT_TEXT_DATA } from "../constant.js";
 import ActionGenerator from "../controller/actionGenerator.js";
 import Selector from "../controller/selector.js";
 
@@ -11,6 +12,7 @@ export default class CanvasView {
     this.selectedShapeType = null;
     this.isDrawing = false;
     this.isDragging = false;
+    this.isAddingText = false;
     this.previewElement = null;
     // 모델의 상태 변화에 대한 리스너
     this.canvasModel.addListener(this.update.bind(this));
@@ -35,9 +37,13 @@ export default class CanvasView {
   render() {
     document.getElementById("root").appendChild(this.canvasElement);
     this.canvasModel.objectList().forEach((object) => {
-      console.log(object)
-      const shapeElement = new ShapeView(object);
-      this.canvasElement.appendChild(shapeElement.createSVGElement());
+      if (object.getType() === "text") {
+        const textElement = new TextView(object);
+        this.canvasElement.appendChild(textElement.createTextElement());
+      } else {
+        const shapeElement = new ShapeView(object);
+        this.canvasElement.appendChild(shapeElement.createSVGElement());
+      }
     });
   }
 
@@ -95,13 +101,15 @@ export default class CanvasView {
       this.addShapeToCanvas();
     } else if (changeType === "deletingShape") {
       this.deleteShapeOfCanvas(shapeId);
+    } else if (changeType === "addingText") {
+      this.addTextToCanvas();
     }
 
   }
 
   resgisterDeleteEvent() {
     window.addEventListener("keydown", (e) => {
-      const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId())
+      const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId())
       if (e.key === "Backspace" && selectedShape !== undefined) {
         ActionGenerator.deleteShape(selectedShape.getId());
         Selector.clearSelection();
@@ -115,13 +123,21 @@ export default class CanvasView {
       if (clickedElement === this.canvasElement) {
         Selector.clearSelection();
         Connector.setToolbarForCanvas();
-      } 
+      }
     });
   }
 
   setDrawingShapeType(shapeType) {
     this.selectedShapeType = shapeType;
     this.setDrawingMode();
+  }
+
+  setAddingText() {
+    this.canvasElement.style.cursor = "text";
+    if (!this.isAddingText) {
+      this.canvasElement.addEventListener("click", this.showTextInput.bind(this));
+      this.isAddingText = true;
+    }
   }
 
   setDrawingMode() {
@@ -179,6 +195,80 @@ export default class CanvasView {
     this.selectedShapeType = null;
   }
 
+  showTextInput(e) {
+    if (!this.isAddingText) return;
+
+    const clickPosition = { x: e.offsetX, y: e.offsetY };
+
+    // Step 1: Create SVG text element as a placeholder
+    const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    textElement.setAttribute("x", clickPosition.x);
+    textElement.setAttribute("y", clickPosition.y);
+    textElement.setAttribute("font-size", DEFAULT_TEXT_DATA.font.size);
+    textElement.setAttribute("font-family", DEFAULT_TEXT_DATA.font.family);
+    textElement.setAttribute("fill", DEFAULT_TEXT_DATA.font.fill.color);
+    textElement.setAttribute("font-weight", DEFAULT_TEXT_DATA.font.weight);
+    this.canvasElement.appendChild(textElement);
+
+    // input 추가
+    const foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
+    foreignObject.setAttribute("x", clickPosition.x);
+    foreignObject.setAttribute("y", clickPosition.y - 10);
+    foreignObject.setAttribute("width", "300");
+    foreignObject.setAttribute("height", "40");
+
+    const input = document.createElement("input");
+    input.value = ""; 
+    input.style.width = DEFAULT_TEXT_DATA.transform.size.width;
+    input.style.height = `${DEFAULT_TEXT_DATA.transform.size.height}px`;
+    input.style.color = DEFAULT_TEXT_DATA.font.fill.color;
+    input.style.fontSize = `${DEFAULT_TEXT_DATA.font.size}px`;
+    input.style.fontFamily = DEFAULT_TEXT_DATA.font.family;
+    input.style.fontWeight = DEFAULT_TEXT_DATA.font.weight;
+    input.style.border = "none";
+    input.style.outline = "none";
+    input.style.padding = 0;
+    input.style.backgroundColor = "transparent";
+
+    foreignObject.appendChild(input);
+    this.canvasElement.appendChild(foreignObject);
+    input.focus();
+
+    let isForeignRemoved = false;
+
+    const removeInput = () => {
+        if (!isForeignRemoved) {
+            isForeignRemoved = true;
+            this.finishTextInput(input, foreignObject, clickPosition);
+        }
+    };
+
+    input.addEventListener("blur", removeInput);
+    input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+            removeInput();
+        }
+    });
+
+    this.isAddingText = false;
+}
+
+
+finishTextInput(input, foreignObject, clickPosition) {
+  const textValue = input.value;
+
+  // input 제거
+  this.canvasElement.removeChild(foreignObject);
+
+  if (textValue) {
+      ActionGenerator.insertText(textValue, clickPosition);
+  } 
+
+  this.isAddingText = false;
+  this.canvasElement.style.cursor = "default";
+}
+
+
   calculatePosition(e) {
     return {
       x: Math.min(this.startX, e.offsetX),
@@ -204,25 +294,18 @@ export default class CanvasView {
   }
   // canvas -> 모델에 도형 추가 시 실행
   addShapeToCanvas() {
-    if (this.canvasModel.objectList) {
-      const lastShape = this.canvasModel.objectList().at(-1);
-      const shapeElement = new ShapeView(lastShape);
-      this.canvasElement.appendChild(shapeElement.createSVGElement());
-    }
-  }
-  updateCanvasSize(width, height) {
-    console.log("크기 업데이트");
-    if (this.canvasElement) {
-      this.canvasElement.setAttribute("width", width);
-      this.canvasElement.setAttribute("height", height);
-    }
-  }
-  // canvas -> 모델에 도형 추가 시 실행
-  addShapeToCanvas() {
     if (this.canvasModel.objectList()) {
       const lastShape = this.canvasModel.objectList().at(-1);
       const shapeElement = new ShapeView(lastShape);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
+    }
+  }
+
+  addTextToCanvas() {
+    if (this.canvasModel.objectList()) {
+      const lastShape = this.canvasModel.objectList().at(-1);
+      const textElement = new TextView(lastShape);
+      this.canvasElement.appendChild(textElement.createTextElement());
     }
   }
 

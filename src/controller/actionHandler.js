@@ -15,11 +15,11 @@ import Connector from "./Connector.js";
     }
 
     static updateShapePosition(op) {
-        Connector.getShapeById(op.shapeId).updatePosition(op.newPosition);
+        Connector.getObjectById(op.shapeId).updatePosition(op.newPosition);
     }
 
     static resizeShape(op) {
-        Connector.getShapeById(op.shapeId).resizeShape(op.newSize, op.newPosition);
+        Connector.getObjectById(op.shapeId).resizeShape(op.newSize, op.newPosition);
     }
 
     static insertShape(op) {
@@ -30,7 +30,19 @@ import Connector from "./Connector.js";
         Connector.getCanvas().deleteShapeModel(op.shapeId);
     }
 
+    static insertText(op) {
+        Connector.getCanvas().addTextModel(op.textValue, op.textPosition);
+    }
+
+    static moveText(op) {
+        Connector.getObjectById(op.textId).updatePosition(op.newPosition);
+    }
+
+    static editText(op) {
+        Connector.getObjectById(op.textId).updateContent(op.newText);
+    }
+
     static updateShapeColor(op) {
-        Connector.getShapeById(op.shapeId).updateColor(op.newColor);
+        Connector.getObjectById(op.shapeId).updateColor(op.newColor);
     }
 }

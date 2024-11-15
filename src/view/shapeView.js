@@ -29,7 +29,7 @@ export default class ShapeView {
     const shape = this.shape;
     let element;
 
-    switch(shape.type()) {
+    switch(shape.getType()) {
       case "rectangle":
         element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         element.setAttribute("x", shape.position().x);
@@ -127,7 +127,7 @@ export default class ShapeView {
     this.isDragging = true; // TODO : 추후 flag 분리 예정
     this.startclientX = e.clientX;
     this.startclientY = e.clientY;
-    Selector.setSelectedShape(this.shape.getId());
+    Selector.setSelectedObject(this.shape.getId());
     this.createResizeHandles();
     this.createPreviewShape(e.clientX, e.clientY);
     Connector.setToolbarForShape(this.shape.getId());
@@ -239,12 +239,12 @@ export default class ShapeView {
 
   updatePreviewShapePosition(x, y, width, height) {
     const preview = this.previewShape;
-    if (this.shape.type() === "ellipse") {
+    if (this.shape.getType() === "ellipse") {
       preview.setAttribute("cx", x + width / 2);
       preview.setAttribute("cy", y + height / 2);
       preview.setAttribute("rx", width / 2);
       preview.setAttribute("ry", height / 2);
-    } else if (this.shape.type() === "triangle") {
+    } else if (this.shape.getType() === "triangle") {
       const points = `${x + width / 2},${y} ${x},${y + height} ${x + width},${y + height}`;
       preview.setAttribute("points", points);
     } else {
@@ -266,22 +266,22 @@ export default class ShapeView {
 
   // view 업데이트
   updatePosition() {
-    const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId());
+    const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
     const shapeElement = document.getElementById(selectedShape.getId());
     const { x, y } = selectedShape.position();
     const { width, height } = selectedShape.size();
 
-    if (selectedShape.type() === "rectangle") {
+    if (selectedShape.getType() === "rectangle") {
       shapeElement.setAttribute("x", x);
       shapeElement.setAttribute("y", y);
       shapeElement.setAttribute("width", width);
       shapeElement.setAttribute("height", height);
-    } else if (selectedShape.type() === "ellipse") {
+    } else if (selectedShape.getType() === "ellipse") {
       shapeElement.setAttribute("cx", x + width / 2);
       shapeElement.setAttribute("cy", y + height / 2);
       shapeElement.setAttribute("rx", width / 2);
       shapeElement.setAttribute("ry", height / 2);
-    } else if (selectedShape.type() === "triangle") {
+    } else if (selectedShape.getType() === "triangle") {
       const points = [
         `${x + width / 2},${y}`, 
         `${x},${y + height}`, 
@@ -292,7 +292,7 @@ export default class ShapeView {
   }
 
   updateColor() {
-    const selectedShape = Connector.getShapeById(Selector.getSelectedShapeId());
+    const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
     const shapeElement = document.getElementById(selectedShape.getId());
 
     shapeElement.setAttribute("fill", selectedShape.fillcolor())

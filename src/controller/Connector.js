@@ -7,8 +7,8 @@ export default class Connector {
         return Core.Model.getCanvas();
     }
 
-    static getShapeById(id) {
-        return Core.Model.getShapeById(id);
+    static getObjectById(id) {
+        return Core.Model.getObjectById(id);
     }
 
     static getCanvasSize() {
@@ -23,12 +23,12 @@ export default class Connector {
         Core.View.setDrawingShapeType(shapeType);
     }
 
-    static getShapeColor() {
-        Core.View.setDrawingShapeType(shapeType);
+    static setAddingText() {
+        Core.View.setAddingText();
     }
 
     static setToolbarForShape(shapeId) {
-        const shape = this.getShapeById(shapeId);
+        const shape = this.getObjectById(shapeId);
         if (shape) {
             UIView.updateColorPickerForShape(shapeId, shape.fillcolor());
         }

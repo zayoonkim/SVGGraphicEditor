@@ -21,7 +21,7 @@ export default class Shape {
 
     updateColor(newFillColor) {
         this.fillcolor(newFillColor);
-        this.notifyListeners("color")
+        this.notifyListeners("color");
     }
   
     // getter - setters
@@ -30,8 +30,8 @@ export default class Shape {
         return this._id;
     }
 
-    type(newType) {
-        return newType == null ? this._type : (this._type = newType);
+    getType() {
+        return this._type;
     }
 
     stroke(newStroke) {

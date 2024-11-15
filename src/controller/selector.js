@@ -4,22 +4,37 @@ export default class Selector {
   // static isResizing = false;
   static currentHandle = null;
 
-  static setSelectedShape(id) {
+  static setSelectedObject(id) {
     this.id = id;
     this.clearSelection();
   }
 
-  static getSelectedShapeId() {
+  static getSelectedObjectId() {
     return this.id;
   }
 
   static getHandlePositions() {
-    const shape = Connector.getShapeById(Selector.getSelectedShapeId());
-    const handleSize = 8;
-    const x = shape.position().x;
-    const y = shape.position().y;
-    const width = shape.size().width;
-    const height = shape.size().height;
+    const object = Connector.getObjectById(Selector.getSelectedObjectId());
+    const handleSize = 5;
+    if (object.getType() === "text") {
+      const bbox = document.getElementById(object.getId()).getBBox();
+      const x = bbox.x;
+      const y = bbox.y;
+      const width = bbox.width;
+      const height = bbox.height;
+
+      return this.calculateHandles(x, y, width, height, handleSize);
+    } else {
+      const x = object.position().x;
+      const y = object.position().y;
+      const width = object.size().width;
+      const height = object.size().height;
+
+      return this.calculateHandles(x, y, width, height, handleSize);
+    }
+
+  }
+  static calculateHandles(x, y, width, height, handleSize) {
     return [
       {
         id: "nw",
