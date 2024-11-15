@@ -30,11 +30,14 @@ export default class UIView {
       this.updateCanvasColor(event)
     );
     this.confirmButton.addEventListener("click", () => this.updateCanvasSize()); // 확인 버튼 클릭 시 크기 업데이트
-    this.addTools.addEventListener("click", (event) =>
-      this.addShape(event.target.id)
-    );
+    this.addTools.addEventListener("click", (event) => {
+      if (event.target.id === "text") {
+        this.addText();
+      } else {
+        this.addShape(event.target.id);
+      }
+    });
   }
-
   updateCanvasColor(e) {
     const newColor = e.target.value;
     ActionGenerator.updateCanvasColor(newColor);
@@ -64,4 +67,8 @@ export default class UIView {
     this.shapecolorPicker.style.display = 'none';
   }
 
+
+  addText() {
+    Connector.setAddingText();
+  }
 }

@@ -16,8 +16,8 @@ export default class Core {
             return Core.canvas;
         },
 
-        getShapeById(id) {
-            return Core.canvas.getShapeById(id);
+        getObjectById(id) {
+            return Core.canvas.getObjectById(id);
         },
 
         getCanvasSizeValue() {
@@ -35,6 +35,10 @@ export default class Core {
     static View = {
         setDrawingShapeType(shapeType) {
             Core.canvasView.setDrawingShapeType(shapeType);
+        },
+
+        setAddingText() {
+            Core.canvasView.setAddingText();
         },
 
         updateShapePosition(shapeId) {
