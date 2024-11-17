@@ -1,6 +1,3 @@
-import Connector from "../controller/Connector.js";
-import Selector from "../controller/selector.js";
-
 export default class Shape {
     constructor(shapeData) {
         this.initializeProps(shapeData);
@@ -11,19 +8,14 @@ export default class Shape {
         this._id = shapeData.id;
         this._type = shapeData.type;
         this._stroke = shapeData.stroke; // color, width
-        this._fillcolor = shapeData.fill.color;
-        this._fillOpacity = shapeData.fill.opacity;
-        this._position = shapeData.transform.position; // x,y
-        this._size = shapeData.transform.size; // width, height
-        this._rotation = shapeData.transform.rotation;
+        this._fillColor = shapeData.fill?.color;
+        this._fillOpacity = shapeData.fill?.opacity;
+        this._position = shapeData.position; // x,y
+        this._size = shapeData.size; // width, height
+        this._rotation = shapeData.rotation;
         this._alignment = shapeData.alignment;
     }
 
-    updateColor(newFillColor) {
-        this.fillcolor(newFillColor);
-        this.notifyListeners("color");
-    }
-  
     // getter - setters
 
     getId() {
@@ -38,8 +30,8 @@ export default class Shape {
         return newStroke == null ? this._stroke : (this._stroke = newStroke);
     }
 
-    fillcolor(newFillColor) {
-        return newFillColor == null ? this._fillcolor : (this._fillcolor = newFillColor);
+    fillColor(newFillColor) {
+        return newFillColor == null ? this._fillColor : (this._fillColor = newFillColor);
     }
 
     fillOpacity(newFillOpacity) {
@@ -66,7 +58,12 @@ export default class Shape {
         this.position(newPosition);
         this.notifyListeners("position");
     }
-    
+
+    updateColor(newFillColor) {
+        this.fillColor(newFillColor);
+        this.notifyListeners("color");
+    }
+
     resizeShape(newSize, newPosition) {
         this.position(newPosition);
         this.size(newSize)
@@ -79,6 +76,22 @@ export default class Shape {
 
     notifyListeners(changeType) {
         this.listeners.forEach((listener) => listener(changeType));
+    }
+
+    getExportData() {
+        return {
+            id: this._id,
+            type: this._type,
+            stroke: this._stroke,
+            fill: {
+                color: this._fillColor,
+                opacity: this._fillOpacity,
+            },
+            position: this._position,
+            size: this._size,
+            rotation: this._rotation,
+            alignment: this._alignment,
+        };
     }
 }
 

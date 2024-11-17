@@ -2,40 +2,54 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>mini WebShow</title>
-    <link rel="stylesheet" href="styles.css">
+  <title>mini WebShow</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div id="root">
-        <div id="toolbar">
-            <label for="colorInput" class="label">Canvas Color:</label>
+  <div id="root">
+    <div id="toolbar">
+      <div id="buttons">
+        <button id="openButton">
+          <img src="src/assets/open.svg" alt="open" />
+        </button>
+        <button id="saveButton">
+          <img src="src/assets/save.svg" alt="save" />
+        </button>
+      </div>
+      <div id="canvasToolbar">
+        <h2>Canvas</h2>
+        <label for="colorPicker">Canvas Color:</label>
+        <input type="color" id="colorPicker" />
+        <label for="widthInput">Width:</label>
+        <input type="number" id="widthInput" />
+        <label for="heightInput">Height:</label>
+        <input type="number" id="heightInput" />
+        <button id="confirmButton">OK</button>
+      </div>
 
-            <input type="color" id="colorPicker">
+      <div id="shapeToolbar" style="display: none;"></div> 
 
-            <label for="widthInput" class="label">Width:</label>
-            
-            <input type="number" id="widthInput">
-
-            <label for="heightInput" class="label">Height:</label>
-            <input type="number" id="heightInput">
-
-            <button id="confirmButton">확인</button>
-
-            <div id="addTools">
-                <button id="rectangle">사각형</button>
-                <button id="ellipse">타원</button>
-                <button id="triangle">삼각형</button>
-                <button id="text">text</button>
-            </div>
-            <input type="color" id="shapecolorPicker" style="display: none;" />
-
-        </div>
+      <div id="addTools">
+        <button id="rectangle">
+          <img src="src/assets/rectangle.svg" alt="Rectangle" />
+        </button>
+        <button id="ellipse">
+          <img src="src/assets/ellipse.svg" alt="ellipse" />
+        </button>
+        <button id="triangle">
+          <img src="src/assets/triangle.svg" alt="triangle" />
+        </button>
+        <button id="text">
+          <img src="src/assets/text.svg" alt="text" />
+        </button>
+      </div>
     </div>
-    <script src="./src/app.js" type="module"></script>
+    <input type="file" id="fileInput" style="display: none;" />
+    <script src="./src/app.js" type="module" defer></script>
 </body>
 
 </html>

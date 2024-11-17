@@ -1,18 +1,131 @@
 body {
+    background-color: #f9f9f9;
+  }
+  
+  #root {
+    width: 100%;
+    display: flex;
+    align-items: flex-start;
+    margin-top: 20px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20px;
-}
+    font-family: Arial, sans-serif;
 
-#toolbar {
+  }
+  
+  #toolbar {
     display: flex;
+    flex-direction: column;
     align-items: center;
-    padding: 10px;
-    border: 1px solid;
-    border-color: lightgray;
-}
+    width: 200px;
+    height: 100%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+  }
+  
+  #canvasToolbar,
+  #shapeToolbar {
+    width: 200px;
+    margin-bottom: 20px;
+  }
+  
+  #canvasToolbar label,
+  #shapeToolbar label {
+    display: block;
+    font-size: 12px;
+    margin-bottom: 5px;
+    color: #555;
+  }
+  
+  #canvasToolbar input,
+  #shapeToolbar input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  #buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    margin-left: auto;
+  }
+  #buttons button {
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 30px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
-#colorInput {
-    margin-right: 8px;
-}
+  }
+
+  #buttons img {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
+
+  #confirmButton {
+    margin-top: 10px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  #addTools {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  #addTools button {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    border-radius: 50%;
+    background-color: #f1f1f1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    font-size: 16px;
+  }
+
+  #addTools button img {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
+  }
+  
+  #addTools button:hover {
+    background-color: #e0e0e0;
+  }
+  
+  #undoRedo {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  #undoRedo button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  
+  #canvas {
+    /* flex-grow: 1; */
+    /* width: 600px;
+    height: 500px; */
+    /* background-color: #e9e9e9; */
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  

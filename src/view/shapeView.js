@@ -63,7 +63,7 @@ export default class ShapeView {
     this.element = element;
     // 공통 속성
     this.element.setAttribute("id", this.shape.getId());
-    this.element.setAttribute("fill", shape.fillcolor());
+    this.element.setAttribute("fill", shape.fillColor());
     this.element.setAttribute("opacity", shape.fillOpacity());
     this.element.setAttribute("stroke", shape.stroke().color);
     this.element.setAttribute("stroke-width", shape.stroke().width);
@@ -71,6 +71,7 @@ export default class ShapeView {
     this.element.addEventListener("mouseenter", () => {
       this.element.setAttribute("stroke", "#4F80FF");
       this.element.setAttribute("stroke-width", 1);
+      this.element.style.cursor = "move";
     });
 
     this.element.addEventListener("mouseleave", () => {
@@ -130,7 +131,7 @@ export default class ShapeView {
     Selector.setSelectedObject(this.shape.getId());
     this.createResizeHandles();
     this.createPreviewShape(e.clientX, e.clientY);
-    Connector.setToolbarForShape(this.shape.getId());
+    Connector.setToolbarForObject(this.shape.getId());
 
   }
 
@@ -239,6 +240,7 @@ export default class ShapeView {
 
   updatePreviewShapePosition(x, y, width, height) {
     const preview = this.previewShape;
+    preview.style.cursor = "move"; // 움직일 때에도 move 커서 유지
     if (this.shape.getType() === "ellipse") {
       preview.setAttribute("cx", x + width / 2);
       preview.setAttribute("cy", y + height / 2);
@@ -253,7 +255,7 @@ export default class ShapeView {
       preview.setAttribute("width", width);
       preview.setAttribute("height", height);
     }
-    preview.setAttribute("fill", this.shape.fillcolor())
+    preview.setAttribute("fill", this.shape.fillColor())
   }
 
 
@@ -295,7 +297,7 @@ export default class ShapeView {
     const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
     const shapeElement = document.getElementById(selectedShape.getId());
 
-    shapeElement.setAttribute("fill", selectedShape.fillcolor())
+    shapeElement.setAttribute("fill", selectedShape.fillColor())
   }
 }
 

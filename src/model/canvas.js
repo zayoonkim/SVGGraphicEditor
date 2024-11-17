@@ -12,19 +12,20 @@ export default class Canvas {
   initializeProps(canvasJson) {
     this._id = "canvas"; // 임시 canvas id
     this._fillColor = canvasJson.fill?.color;
-    this._width = canvasJson.transform?.width;
-    this._height = canvasJson.transform?.height;
+    this._width = canvasJson.size?.width;
+    this._height = canvasJson.size?.height;
     this._objectList = [];
     this._listeners = [];
     this.initializeObjects(canvasJson.objectList);
   }
 
+
   initializeObjects(objectList) {
     objectList?.forEach((object) => {
-      if (object.shape) {
-        this._objectList.push(new Shape(object.shape));
-      } else if (object.text) {
-        this._objectList.push(new Text(object.text));
+      if (object.type === "text") {
+        this._objectList.push(new Text(object));
+      } else {
+        this._objectList.push(new Shape(object));
       }
     });
   }
@@ -67,11 +68,9 @@ export default class Canvas {
       id: nanoid(),
       stroke: { color: "#000000", width: 1 },
       fill: { color: "#ffffff", opacity: 1.0 },
-      transform: {
-        position: { x: position.x, y: position.y },
-        size: { width: position.width, height: position.height },
-        rotation: 0
-      },
+      position: { x: position.x, y: position.y },
+      size: { width: position.width, height: position.height },
+      rotation: 0,
       alignment: "center"
     };
     this.objectList().push(new Shape(shapeData));
@@ -89,13 +88,9 @@ export default class Canvas {
       ...DEFAULT_TEXT_DATA,
       id: nanoid(),
       textContent: value,
-      transform: {
-        ...DEFAULT_TEXT_DATA.transform,
-        position: { x: position.x, y: position.y },
-      }
-    }
-    console.log(textData)
+      position: { x: position.x, y: position.y },
 
+    }
     this.objectList().push(new Text(textData));
     this.notifyListeners("addingText");
   }
@@ -111,5 +106,19 @@ export default class Canvas {
   // 구독중인 View에 변화를 알림
   notifyListeners(changeType, shapeId) {
     this._listeners.forEach((listener) => listener(this, changeType, shapeId));
+  }
+
+  getExportData() {
+    return {
+      canvas: {
+        id: this._id,
+        fill: { color: this._fillColor },
+        size: {
+          width: this._width,
+          height: this._height,
+        },
+        objectList: this._objectList.map(obj => obj.getExportData()),
+      }
+    }
   }
 }

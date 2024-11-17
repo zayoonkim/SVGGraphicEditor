@@ -20,16 +20,28 @@ export default class Core {
             return Core.canvas.getObjectById(id);
         },
 
-        getCanvasSizeValue() {
+        getCanvasSize() {
             return {
                 width: Core.canvas.width(),
                 height: Core.canvas.height()
             };
         },
 
-        getCanvasColorValue() {
+        getCanvasColor() {
             return Core.canvas.fillColor();
         },
+        
+        getTextSize(id) {
+            return Core.canvas.getObjectById(id).fontSize();
+        },
+
+        getObjectColor(id) {
+            return Core.canvas.getObjectById(id).fillColor();
+        },
+
+        getExportData() {
+            return Core.canvas.getExportData();
+        }
     };
 
     static View = {
@@ -37,8 +49,8 @@ export default class Core {
             Core.canvasView.setDrawingShapeType(shapeType);
         },
 
-        setAddingText() {
-            Core.canvasView.setAddingText();
+        setAddingTextMode() {
+            Core.canvasView.setAddingTextMode();
         },
 
         updateShapePosition(shapeId) {

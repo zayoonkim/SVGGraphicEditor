@@ -8,17 +8,17 @@ export default class Text {
         this._id = textData.id;
         this._content = textData.textContent;
         this._type = textData.type;
-        this._fill = textData.font.fill;
-        this._position = textData.transform.position; // x, y
-        this._size = textData.transform.size; // width, height
-        this._rotate = textData.transform.rotate;
-        this._stroke = textData.font.stroke;
-        this._fontFamily = textData.font.family;
-        this._fontSize = textData.font.size;
-        this._fontWeight = textData.font.weight;
+        this._fillColor = textData.fill;
+        this._position = textData.position; // x, y
+        this._size = textData.size; // width, height
+        this._rotate = textData.rotate;
+        this._stroke = textData.font?.stroke;
+        this._fontFamily = textData.font?.family;
+        this._fontSize = textData.font?.size;
+        this._fontWeight = textData.font?.weight;
         this._alignment = textData.alignment;
     }
-    
+
     getId() {
         return this._id;
     }
@@ -31,8 +31,8 @@ export default class Text {
         return newContent == null ? this._content : (this._content = newContent);
     }
 
-    fill(newFill) {
-        return newFill == null ? this._fill : (this._fill = newFill);
+    fillColor(newFill) {
+        return newFill == null ? this._fillColor : (this._fillColor = newFill);
     }
 
     stroke(newStroke) {
@@ -45,10 +45,6 @@ export default class Text {
 
     size(newSize) {
         return newSize == null ? this._size : (this._size = newSize);
-    }
-
-    rotate(newRotate) {
-        return newRotate == null ? this._rotate : (this._rotate = newRotate);
     }
 
     fontFamily(newFontFamily) {
@@ -81,11 +77,40 @@ export default class Text {
         this.notifyListeners("position");
     }
 
+    updateColor(newColor) {
+        this.fillColor(newColor);
+        this.notifyListeners("color");
+    }
+
+    updateSize(newSize) {
+        this.fontSize(newSize);
+        this.notifyListeners("size");
+    }
+
     addListener(listener) {
         this.listeners.push(listener);
     }
 
     notifyListeners(changeType) {
         this.listeners.forEach((listener) => listener(changeType));
+    }
+
+    getExportData() {
+        return {
+            id: this._id,
+            textContent: this._content,
+            type: this._type,
+            fill: this._fillColor, 
+            position: this._position,
+            size: this._size,
+            rotate: this._rotate,
+            font: {
+                stroke: this._stroke ,
+                family: this._fontFamily,
+                size: this._fontSize, 
+                weight: this._fontWeight, 
+            },
+            alignment: this._alignment,
+        };
     }
 }

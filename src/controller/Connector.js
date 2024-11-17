@@ -12,30 +12,46 @@ export default class Connector {
     }
 
     static getCanvasSize() {
-        return Core.Model.getCanvasSizeValue();
+        return Core.Model.getCanvasSize();
     }
 
     static getCanvasColor() {
-        return Core.Model.getCanvasColorValue();
+        return Core.Model.getCanvasColor();
+    }
+
+    static getObjectColor(id) {
+        return Core.Model.getObjectColor(id);
+    }
+
+    static getTextSize(id) {
+        return Core.Model.getTextSize(id);
     }
 
     static setDrawingShapeType(shapeType) {
         Core.View.setDrawingShapeType(shapeType);
     }
 
-    static setAddingText() {
-        Core.View.setAddingText();
+    static setAddingTextMode() {
+        Core.View.setAddingTextMode();
     }
 
-    static setToolbarForShape(shapeId) {
-        const shape = this.getObjectById(shapeId);
-        if (shape) {
-            UIView.updateColorPickerForShape(shapeId, shape.fillcolor());
+    static setToolbarForObject(objectId) {
+        const object = this.getObjectById(objectId);
+        if (object) {
+            if (object.getType() === "text") {
+                UIView.renderTextProperties(objectId); 
+            } else {
+                UIView.renderShapeProperties(objectId);
+            }
         }
     }
 
     static setToolbarForCanvas() {
-        UIView.updateColorPickerForCanvas();
+        UIView.resetToolbar();
     }
 
+    static getExportData() {
+        return Core.Model.getExportData();
+    }
+   
 }
