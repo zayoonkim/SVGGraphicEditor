@@ -122,6 +122,7 @@ export default class CanvasView {
       const clickedElement = e.target;
       if (clickedElement === this.canvasElement) {
         Selector.clearSelection();
+        Selector.setSelectedObject(null);
         Connector.setToolbarForCanvas();
       }
     });
@@ -132,7 +133,7 @@ export default class CanvasView {
     this.setDrawingMode();
   }
 
-  setAddingText() {
+  setAddingTextMode() {
     this.canvasElement.style.cursor = "text";
     if (!this.isAddingText) {
       this.canvasElement.addEventListener("click", this.showTextInput.bind(this));
@@ -200,13 +201,12 @@ export default class CanvasView {
 
     const clickPosition = { x: e.offsetX, y: e.offsetY };
 
-    // Step 1: Create SVG text element as a placeholder
     const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
     textElement.setAttribute("x", clickPosition.x);
     textElement.setAttribute("y", clickPosition.y);
     textElement.setAttribute("font-size", DEFAULT_TEXT_DATA.font.size);
     textElement.setAttribute("font-family", DEFAULT_TEXT_DATA.font.family);
-    textElement.setAttribute("fill", DEFAULT_TEXT_DATA.font.fill.color);
+    textElement.setAttribute("fill", DEFAULT_TEXT_DATA.font.fill);
     textElement.setAttribute("font-weight", DEFAULT_TEXT_DATA.font.weight);
     this.canvasElement.appendChild(textElement);
 
@@ -218,10 +218,10 @@ export default class CanvasView {
     foreignObject.setAttribute("height", "40");
 
     const input = document.createElement("input");
-    input.value = ""; 
+    input.value = "";
     input.style.width = DEFAULT_TEXT_DATA.transform.size.width;
     input.style.height = `${DEFAULT_TEXT_DATA.transform.size.height}px`;
-    input.style.color = DEFAULT_TEXT_DATA.font.fill.color;
+    input.style.color = DEFAULT_TEXT_DATA.font.fill;
     input.style.fontSize = `${DEFAULT_TEXT_DATA.font.size}px`;
     input.style.fontFamily = DEFAULT_TEXT_DATA.font.family;
     input.style.fontWeight = DEFAULT_TEXT_DATA.font.weight;
@@ -237,36 +237,36 @@ export default class CanvasView {
     let isForeignRemoved = false;
 
     const removeInput = () => {
-        if (!isForeignRemoved) {
-            isForeignRemoved = true;
-            this.finishTextInput(input, foreignObject, clickPosition);
-        }
+      if (!isForeignRemoved) {
+        isForeignRemoved = true;
+        this.finishTextInput(input, foreignObject, clickPosition);
+      }
     };
 
     input.addEventListener("blur", removeInput);
     input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-            removeInput();
-        }
+      if (e.key === "Enter" || e.key === "Escape") {
+        removeInput();
+      }
     });
 
     this.isAddingText = false;
-}
+  }
 
 
-finishTextInput(input, foreignObject, clickPosition) {
-  const textValue = input.value;
+  finishTextInput(input, foreignObject, clickPosition) {
+    const textValue = input.value;
 
-  // input 제거
-  this.canvasElement.removeChild(foreignObject);
+    // input 제거
+    this.canvasElement.removeChild(foreignObject);
 
-  if (textValue) {
+    if (textValue) {
       ActionGenerator.insertText(textValue, clickPosition);
-  } 
+    }
 
-  this.isAddingText = false;
-  this.canvasElement.style.cursor = "default";
-}
+    this.isAddingText = false;
+    this.canvasElement.style.cursor = "default";
+  }
 
 
   calculatePosition(e) {

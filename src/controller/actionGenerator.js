@@ -193,4 +193,44 @@ export default class ActionGenerator {
     });
   }
 
+  static updateTextColor(textId, newColor) {
+    ActionManager.executeAction({
+      op: {
+        id: "id",
+        type: "update",
+        command: "updateTextColor",
+        textId: textId,
+        newColor: newColor,
+      },
+      rOp: {
+        id: "id",
+        type: "update",
+        command: "updateTextColor",
+        textId: textId,
+        newColor : newColor,
+      },
+    });
+  }
+  
+  static updateTextSize(textId, newSize) {
+    ActionManager.executeAction({
+      op: {
+        id: "editText",
+        type: "update",
+        command: "updateTextSize",
+        textId: textId,
+        newSize: newSize,
+      },
+      rOp: {
+        id: "editText",
+        type: "update",
+        command: "updateTextSize",
+        textId: textId,
+        newSize: newSize,
+      },
+    });
+  }
+
+
+
 }

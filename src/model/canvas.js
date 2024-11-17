@@ -94,8 +94,6 @@ export default class Canvas {
         position: { x: position.x, y: position.y },
       }
     }
-    console.log(textData)
-
     this.objectList().push(new Text(textData));
     this.notifyListeners("addingText");
   }

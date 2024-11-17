@@ -8,7 +8,7 @@ export default class Text {
         this._id = textData.id;
         this._content = textData.textContent;
         this._type = textData.type;
-        this._fill = textData.font.fill;
+        this._fillcolor = textData.fill;
         this._position = textData.transform.position; // x, y
         this._size = textData.transform.size; // width, height
         this._rotate = textData.transform.rotate;
@@ -31,8 +31,8 @@ export default class Text {
         return newContent == null ? this._content : (this._content = newContent);
     }
 
-    fill(newFill) {
-        return newFill == null ? this._fill : (this._fill = newFill);
+    fillcolor(newFill) {
+        return newFill == null ? this._fillcolor : (this._fillcolor = newFill);
     }
 
     stroke(newStroke) {
@@ -79,6 +79,16 @@ export default class Text {
     updatePosition(newPosition) {
         this.position(newPosition);
         this.notifyListeners("position");
+    }
+    
+    updateColor(newColor) {
+        this.fillcolor(newColor);
+        this.notifyListeners("color");
+    }
+    
+    updateSize(newSize) {
+        this.fontSize(newSize);
+        this.notifyListeners("size");
     }
 
     addListener(listener) {
