@@ -1,6 +1,3 @@
-import Connector from "../controller/Connector.js";
-import Selector from "../controller/selector.js";
-
 export default class Shape {
     constructor(shapeData) {
         this.initializeProps(shapeData);
@@ -17,11 +14,6 @@ export default class Shape {
         this._size = shapeData.transform.size; // width, height
         this._rotation = shapeData.transform.rotation;
         this._alignment = shapeData.alignment;
-    }
-
-    updateColor(newFillColor) {
-        this.fillcolor(newFillColor);
-        this.notifyListeners("color");
     }
   
     // getter - setters
@@ -65,6 +57,11 @@ export default class Shape {
     updatePosition(newPosition) {
         this.position(newPosition);
         this.notifyListeners("position");
+    }
+
+    updateColor(newFillColor) {
+        this.fillcolor(newFillColor);
+        this.notifyListeners("color");
     }
     
     resizeShape(newSize, newPosition) {

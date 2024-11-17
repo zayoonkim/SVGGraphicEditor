@@ -1,6 +1,8 @@
 import Connector from "./Connector.js";
 
   export default class ActionHandler {
+    // canvas
+
     static updateCanvasColor(op) {
         Connector.getCanvas().updateColor(op.value);
     }
@@ -9,9 +11,10 @@ import Connector from "./Connector.js";
         Connector.getCanvas().updateSize(op.width, op.height);
     }
 
-    // TODO : 도형 update
+    //shape
+
     static updateShapeColor(op) {
-        // Connector.getCanvas.updateShapeColor(op.value);
+        Connector.getObjectById(op.shapeId).updateColor(op.newColor);
     }
 
     static updateShapePosition(op) {
@@ -30,6 +33,8 @@ import Connector from "./Connector.js";
         Connector.getCanvas().deleteShapeModel(op.shapeId);
     }
 
+    // text
+    
     static insertText(op) {
         Connector.getCanvas().addTextModel(op.textValue, op.textPosition);
     }
@@ -42,7 +47,11 @@ import Connector from "./Connector.js";
         Connector.getObjectById(op.textId).updateContent(op.newText);
     }
 
-    static updateShapeColor(op) {
-        Connector.getObjectById(op.shapeId).updateColor(op.newColor);
+    static updateTextColor(op) {
+        Connector.getObjectById(op.textId).updateColor(op.newColor);
+    }
+
+    static updateTextSize(op) {
+        Connector.getObjectById(op.textId).updateSize(op.newSize);
     }
 }

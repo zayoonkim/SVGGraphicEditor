@@ -71,6 +71,7 @@ export default class ShapeView {
     this.element.addEventListener("mouseenter", () => {
       this.element.setAttribute("stroke", "#4F80FF");
       this.element.setAttribute("stroke-width", 1);
+      this.element.style.cursor = "move";
     });
 
     this.element.addEventListener("mouseleave", () => {
@@ -130,7 +131,7 @@ export default class ShapeView {
     Selector.setSelectedObject(this.shape.getId());
     this.createResizeHandles();
     this.createPreviewShape(e.clientX, e.clientY);
-    Connector.setToolbarForShape(this.shape.getId());
+    Connector.setToolbarForObject(this.shape.getId());
 
   }
 
@@ -239,6 +240,7 @@ export default class ShapeView {
 
   updatePreviewShapePosition(x, y, width, height) {
     const preview = this.previewShape;
+    preview.style.cursor = "move"; // 움직일 때에도 move 커서 유지
     if (this.shape.getType() === "ellipse") {
       preview.setAttribute("cx", x + width / 2);
       preview.setAttribute("cy", y + height / 2);
