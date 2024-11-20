@@ -36,8 +36,12 @@ export default class Core {
         },
 
         getObjectColor(id) {
-            return Core.canvas.getObjectById(id).fillcolor();
+            return Core.canvas.getObjectById(id).fillColor();
         },
+
+        getExportData() {
+            return Core.canvas.getExportData();
+        }
     };
 
     static View = {

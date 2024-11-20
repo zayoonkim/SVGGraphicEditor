@@ -63,7 +63,7 @@ export default class ShapeView {
     this.element = element;
     // 공통 속성
     this.element.setAttribute("id", this.shape.getId());
-    this.element.setAttribute("fill", shape.fillcolor());
+    this.element.setAttribute("fill", shape.fillColor());
     this.element.setAttribute("opacity", shape.fillOpacity());
     this.element.setAttribute("stroke", shape.stroke().color);
     this.element.setAttribute("stroke-width", shape.stroke().width);
@@ -255,7 +255,7 @@ export default class ShapeView {
       preview.setAttribute("width", width);
       preview.setAttribute("height", height);
     }
-    preview.setAttribute("fill", this.shape.fillcolor())
+    preview.setAttribute("fill", this.shape.fillColor())
   }
 
 
@@ -297,7 +297,7 @@ export default class ShapeView {
     const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
     const shapeElement = document.getElementById(selectedShape.getId());
 
-    shapeElement.setAttribute("fill", selectedShape.fillcolor())
+    shapeElement.setAttribute("fill", selectedShape.fillColor())
   }
 }
 

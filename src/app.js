@@ -1,5 +1,5 @@
-import JsonLoader from "./controller/jsonLoader.js";
+import fileController from "./controller/fileController.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-    const jsonLoader = new JsonLoader(); 
+    fileController.openFile(); 
 });

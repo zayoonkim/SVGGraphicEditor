@@ -23,6 +23,10 @@ export default class CanvasView {
 
   // 내부 프로퍼티
   initializeProps() {
+    const existingCanvas = document.querySelector("svg#canvas");
+    if (existingCanvas) {
+      existingCanvas.remove();
+    }
     const canvasElement = document.createElementNS(
       "http://www.w3.org/2000/svg",
       "svg"
@@ -104,7 +108,6 @@ export default class CanvasView {
     } else if (changeType === "addingText") {
       this.addTextToCanvas();
     }
-
   }
 
   resgisterDeleteEvent() {
@@ -219,8 +222,8 @@ export default class CanvasView {
 
     const input = document.createElement("input");
     input.value = "";
-    input.style.width = DEFAULT_TEXT_DATA.transform.size.width;
-    input.style.height = `${DEFAULT_TEXT_DATA.transform.size.height}px`;
+    input.style.width = DEFAULT_TEXT_DATA.size.width;
+    input.style.height = `${DEFAULT_TEXT_DATA.size.height}px`;
     input.style.color = DEFAULT_TEXT_DATA.font.fill;
     input.style.fontSize = `${DEFAULT_TEXT_DATA.font.size}px`;
     input.style.fontFamily = DEFAULT_TEXT_DATA.font.family;

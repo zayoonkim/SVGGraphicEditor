@@ -19,11 +19,10 @@ export default class TextView {
         textElement.setAttribute("id", text.getId());
         textElement.textContent = text.content();
         textElement.setAttribute("type", text.getType());
-        textElement.setAttribute("fill", text.fillcolor());
+        textElement.setAttribute("fill", text.fillColor());
         textElement.setAttribute("stroke", text.stroke());
         textElement.setAttribute("x", text.position().x);
         textElement.setAttribute("y", text.position().y + 15);
-        textElement.setAttribute("rotate", text.rotate());
         textElement.setAttribute("font-family", text.fontFamily());
         textElement.setAttribute("font-weight", text.fontWeight());
         textElement.setAttribute("font-size", text.fontSize());
@@ -56,9 +55,9 @@ export default class TextView {
 
     }
 
+    // TODO : 이동 시 Preview 객체 생성
     handleDragging(e) {
         if (!this.isDragging) return;
-        // TODO : 이동 시 Preview
         // const dx = e.clientX - this.startClientX;
         // const dy = e.clientY - this.startClientY;
 
@@ -119,6 +118,7 @@ export default class TextView {
       }
 
     startEditing(element) {
+        const text = this.text;
         let isForeignReplaced = false;
         Selector.clearSelection();
         const bbox = element.getBBox();
@@ -131,9 +131,9 @@ export default class TextView {
 
         const input = document.createElement("input");
         input.value = this.textElement.textContent;
-        input.style.fontSize = this.text.fontSize() + "px";
-        input.style.fontWeight = this.text.fontWeight();
-        input.style.fontFamily = this.text.fontFamily();
+        input.style.fontSize = text.fontSize() + "px";
+        input.style.fontWeight = text.fontWeight();
+        input.style.fontFamily = text.fontFamily();
         input.style.border = "none";
         input.style.backgroundColor = "transparent";
         input.style.outline = "none";
@@ -148,7 +148,7 @@ export default class TextView {
 
             const newText = input.value;
             if (newText) {
-                ActionGenerator.updateTextContent(this.text.getId(), newText);
+                ActionGenerator.updateTextContent(text.getId(), newText);
             }
 
             foreignObject.replaceWith(this.textElement);
@@ -167,7 +167,7 @@ export default class TextView {
         } else if (changeType === "position") {
             this.updatePosition(this.text.position());
         } else if (changeType === "color") {
-            this.updateColor(this.text.fillcolor());
+            this.updateColor(this.text.fillColor());
         } else if (changeType === "size") {
             this.updateSize(this.text.fontSize());
         }

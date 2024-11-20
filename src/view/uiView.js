@@ -1,28 +1,44 @@
 import ActionGenerator from "../controller/actionGenerator.js";
 import Connector from "../controller/Connector.js";
+import FileController from "../controller/fileController.js";
+// import JsonLoader from "../controller/jsonLoader.js";
 
 export default class UIView {
   constructor() {
-    this.createToolbar();
+    this.bindToolbarEvents();
   }
 
-  createToolbar() {
+  initToolbar() {
     // 캔버스 속성
+    const canvasSize = Connector.getCanvasSize();
+    const canvasColor = Connector.getCanvasColor();
     this.toolbar = document.getElementById("toolbar");
     this.canvasToolbar = document.getElementById("canvasToolbar");
-    this.shapeToolbar = document.getElementById("shapeToolbar"); 
+    this.shapeToolbar = document.getElementById("shapeToolbar");
 
     this.colorPicker = document.getElementById("colorPicker");
-    this.colorPicker.value = Connector.getCanvasColor();
+    this.colorPicker.value = canvasColor;
 
     this.widthInput = document.getElementById("widthInput");
     this.heightInput = document.getElementById("heightInput");
-    const canvasSize = Connector.getCanvasSize();
+
     this.widthInput.value = canvasSize.width;
     this.heightInput.value = canvasSize.height;
 
     this.confirmButton = document.getElementById("confirmButton");
     this.addTools = document.getElementById("addTools");
+
+    this.openButton = document.getElementById("openButton");
+    this.saveButton = document.getElementById("saveButton");
+    this.fileInput = document.getElementById("fileInput");
+  }
+
+  bindToolbarEvents() {
+    this.initToolbar();
+
+    this.openButton.addEventListener("click", e => this.handleOpenFile(e));
+    this.saveButton.addEventListener("click", this.handleSaveFile);
+    this.fileInput.addEventListener("change", this.handleFileInput);
 
     // 이벤트 바인딩
     this.colorPicker.addEventListener("input", (event) => this.updateCanvasColor(event));
@@ -38,8 +54,9 @@ export default class UIView {
   }
 
   static renderShapeProperties(shapeId) {
-    this.canvasToolbar = document.getElementById("canvasToolbar"); 
-    this.shapeToolbar = document.getElementById("shapeToolbar"); 
+    this.canvasToolbar = document.getElementById("canvasToolbar");
+    this.shapeToolbar = document.getElementById("shapeToolbar");
+
     const shapeColor = Connector.getObjectColor(shapeId);
     this.canvasToolbar.style.display = "none"; // 캔버스 툴바 숨기기
     this.shapeToolbar.innerHTML = `
@@ -58,9 +75,8 @@ export default class UIView {
     this.canvasToolbar = document.getElementById("canvasToolbar");
     this.shapeToolbar = document.getElementById("shapeToolbar");
     const textColor = Connector.getObjectColor(textId);
-    console.log(textColor);
     const textSize = Connector.getTextSize(textId);
-    console.log(textSize)
+
     this.canvasToolbar.style.display = "none"; // 캔버스 툴바 숨기기
     this.shapeToolbar.innerHTML = `
       <h2>Text</h2>
@@ -83,13 +99,38 @@ export default class UIView {
   }
 
   static resetToolbar() {
-    this.canvasToolbar = document.getElementById("canvasToolbar"); 
-    this.shapeToolbar = document.getElementById("shapeToolbar"); 
+    this.canvasToolbar = document.getElementById("canvasToolbar");
+    this.shapeToolbar = document.getElementById("shapeToolbar");
 
-    this.canvasToolbar.style.display = "block"; 
+    this.canvasToolbar.style.display = "block";
 
-    this.shapeToolbar.style.display = "none"; 
+    this.shapeToolbar.style.display = "none";
   }
+
+  handleOpenFile = (e) => {
+    this.fileInput.click();
+  };
+
+  handleFileInput = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    if (file) {
+      reader.onload = (e) => {
+        FileController.openFile(e.target.result);
+        e.target.value = ''; // Input value 초기화
+      };
+      reader.readAsText(file);
+    } else {
+      console.error("파일이 선택되지 않았습니다.");
+    }
+
+  };
+
+  handleSaveFile = () => {
+    const jsonData = Connector.getExportData();
+    FileController.saveFile(jsonData);
+
+  };
 
   updateCanvasColor(e) {
     const newColor = e.target.value;

@@ -13,8 +13,12 @@
   <div id="root">
     <div id="toolbar">
       <div id="buttons">
-        <button id="openButton">Open</button>
-        <button id="saveButton">Save</button>
+        <button id="openButton">
+          <img src="src/assets/open.svg" alt="open" />
+        </button>
+        <button id="saveButton">
+          <img src="src/assets/save.svg" alt="save" />
+        </button>
       </div>
       <div id="canvasToolbar">
         <h2>Canvas</h2>
@@ -34,16 +38,17 @@
           <img src="src/assets/rectangle.svg" alt="Rectangle" />
         </button>
         <button id="ellipse">
-          <img src="src/assets/ellipse.svg" alt="Rectangle" />
+          <img src="src/assets/ellipse.svg" alt="ellipse" />
         </button>
         <button id="triangle">
-          <img src="src/assets/triangle.svg" alt="Rectangle" />
+          <img src="src/assets/triangle.svg" alt="triangle" />
         </button>
         <button id="text">
-          <img src="src/assets/text.svg" alt="Rectangle" />
+          <img src="src/assets/text.svg" alt="text" />
         </button>
       </div>
     </div>
+    <input type="file" id="fileInput" style="display: none;" />
     <script src="./src/app.js" type="module" defer></script>
 </body>
 
