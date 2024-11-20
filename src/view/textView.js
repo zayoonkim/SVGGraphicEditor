@@ -55,7 +55,7 @@ export default class TextView {
 
     }
 
-        // TODO : 이동 시 Preview 객체 생성
+    // TODO : 이동 시 Preview 객체 생성
     handleDragging(e) {
         if (!this.isDragging) return;
         // const dx = e.clientX - this.startClientX;

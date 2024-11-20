@@ -88,8 +88,7 @@ export default class Canvas {
       ...DEFAULT_TEXT_DATA,
       id: nanoid(),
       textContent: value,
-      position: { x: position.x, y: position.y },
-
+      position: { x: position.x, y: position.y }
     }
     this.objectList().push(new Text(textData));
     this.notifyListeners("addingText");

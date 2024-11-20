@@ -15,7 +15,6 @@ export default class Shape {
         this._rotation = shapeData.rotation;
         this._alignment = shapeData.alignment;
     }
-
     // getter - setters
 
     getId() {

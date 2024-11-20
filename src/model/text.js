@@ -76,6 +76,16 @@ export default class Text {
         this.position(newPosition);
         this.notifyListeners("position");
     }
+    
+    updateColor(newColor) {
+        this.fillcolor(newColor);
+        this.notifyListeners("color");
+    }
+    
+    updateSize(newSize) {
+        this.fontSize(newSize);
+        this.notifyListeners("size");
+    }
 
     updateColor(newColor) {
         this.fillColor(newColor);

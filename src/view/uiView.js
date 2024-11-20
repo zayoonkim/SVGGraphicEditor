@@ -21,6 +21,7 @@ export default class UIView {
 
     this.widthInput = document.getElementById("widthInput");
     this.heightInput = document.getElementById("heightInput");
+
     this.widthInput.value = canvasSize.width;
     this.heightInput.value = canvasSize.height;
 
@@ -49,11 +50,13 @@ export default class UIView {
         this.addShape(event.target.id);
       }
     });
+
   }
 
   static renderShapeProperties(shapeId) {
     this.canvasToolbar = document.getElementById("canvasToolbar");
     this.shapeToolbar = document.getElementById("shapeToolbar");
+
     const shapeColor = Connector.getObjectColor(shapeId);
     this.canvasToolbar.style.display = "none"; // 캔버스 툴바 숨기기
     this.shapeToolbar.innerHTML = `
@@ -73,6 +76,7 @@ export default class UIView {
     this.shapeToolbar = document.getElementById("shapeToolbar");
     const textColor = Connector.getObjectColor(textId);
     const textSize = Connector.getTextSize(textId);
+
     this.canvasToolbar.style.display = "none"; // 캔버스 툴바 숨기기
     this.shapeToolbar.innerHTML = `
       <h2>Text</h2>
