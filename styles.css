@@ -104,20 +104,27 @@ body {
   #addTools button:hover {
     background-color: #e0e0e0;
   }
-  
-  #undoRedo {
+
+  #undoredoTools {
     display: flex;
     justify-content: center;
     gap: 10px;
+    flex-direction: row;
+    margin-top: 30px;
   }
   
-  #undoRedo button {
+  #undoredoTools button {
     background: none;
     border: none;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 15px;
+    border-radius: 20px;
   }
   
+  #undoredoTools button:hover {
+    background-color: #e0e0e0;
+  }
+
   #canvas {
     /* flex-grow: 1; */
     /* width: 600px;

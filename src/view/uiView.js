@@ -1,7 +1,6 @@
 import ActionGenerator from "../controller/actionGenerator.js";
 import Connector from "../controller/Connector.js";
 import FileController from "../controller/fileController.js";
-// import JsonLoader from "../controller/jsonLoader.js";
 
 export default class UIView {
   constructor() {
@@ -10,36 +9,26 @@ export default class UIView {
 
   initToolbar() {
     // 캔버스 속성
-    const canvasSize = Connector.getCanvasSize();
-    const canvasColor = Connector.getCanvasColor();
-    this.toolbar = document.getElementById("toolbar");
-    this.canvasToolbar = document.getElementById("canvasToolbar");
-    this.shapeToolbar = document.getElementById("shapeToolbar");
-
     this.colorPicker = document.getElementById("colorPicker");
-    this.colorPicker.value = canvasColor;
-
-    this.widthInput = document.getElementById("widthInput");
-    this.heightInput = document.getElementById("heightInput");
-
-    this.widthInput.value = canvasSize.width;
-    this.heightInput.value = canvasSize.height;
-
     this.confirmButton = document.getElementById("confirmButton");
     this.addTools = document.getElementById("addTools");
 
     this.openButton = document.getElementById("openButton");
     this.saveButton = document.getElementById("saveButton");
     this.fileInput = document.getElementById("fileInput");
+
+    this.undoButton = document.getElementById("undoButton");
+    this.redoButton = document.getElementById("redoButton");
+
+    UIView.updateUndoRedoState(false, false);    
+    UIView.setCanvasToolbarState();
   }
 
   bindToolbarEvents() {
     this.initToolbar();
-
     this.openButton.addEventListener("click", e => this.handleOpenFile(e));
     this.saveButton.addEventListener("click", this.handleSaveFile);
     this.fileInput.addEventListener("change", this.handleFileInput);
-
     // 이벤트 바인딩
     this.colorPicker.addEventListener("input", (event) => this.updateCanvasColor(event));
     this.confirmButton.addEventListener("click", () => this.updateCanvasSize());
@@ -50,7 +39,43 @@ export default class UIView {
         this.addShape(event.target.id);
       }
     });
+    this.undoButton.addEventListener("click", () => this.executeUndo());
+    this.redoButton.addEventListener("click", () => this.executeRedo());
+  }
 
+  static setCanvasToolbarState() {
+    const canvasToolbar = document.getElementById("canvasToolbar");
+    const shapeToolbar = document.getElementById("shapeToolbar");
+
+    const colorPicker = document.getElementById("colorPicker");
+    const widthInput = document.getElementById("widthInput");
+    const heightInput = document.getElementById("heightInput");
+    const canvasSize = Connector.getCanvasSize();
+    const canvasColor = Connector.getCanvasColor();
+
+    canvasToolbar.style.display = "block";
+    shapeToolbar.style.display = "none";
+
+    if (colorPicker) {
+      colorPicker.value = canvasColor;
+    }
+    if (widthInput) {
+      widthInput.value = canvasSize.width;
+    }
+    if (heightInput) {
+      heightInput.value = canvasSize.height;
+    }
+  }
+
+  static updateUndoRedoState(isUndoable, isRedoable) {
+    this.undoButton = document.getElementById("undoButton");
+    this.redoButton = document.getElementById("redoButton");
+
+    this.undoButton.style.opacity = isUndoable ? "1" : "0.3";
+    this.undoButton.style.pointerEvents = isUndoable ? "auto" : "none";
+    
+    this.redoButton.style.opacity = isRedoable ? "1" : "0.3";
+    this.redoButton.style.pointerEvents = isRedoable ? "auto" : "none";
   }
 
   static renderShapeProperties(shapeId) {
@@ -98,15 +123,6 @@ export default class UIView {
     // });
   }
 
-  static resetToolbar() {
-    this.canvasToolbar = document.getElementById("canvasToolbar");
-    this.shapeToolbar = document.getElementById("shapeToolbar");
-
-    this.canvasToolbar.style.display = "block";
-
-    this.shapeToolbar.style.display = "none";
-  }
-
   handleOpenFile = (e) => {
     this.fileInput.click();
   };
@@ -138,8 +154,10 @@ export default class UIView {
   }
 
   updateCanvasSize() {
-    const newWidth = parseInt(this.widthInput.value, 10);
-    const newHeight = parseInt(this.heightInput.value, 10);
+    const widthInput = document.getElementById("widthInput");
+    const heightInput = document.getElementById("heightInput");
+    const newWidth = parseInt(widthInput.value, 10);
+    const newHeight = parseInt(heightInput.value, 10);
     ActionGenerator.updateCanvasSize(newWidth, newHeight);
   }
 
@@ -150,4 +168,13 @@ export default class UIView {
   addText() {
     Connector.setAddingTextMode();
   }
+
+  executeUndo() {
+    ActionGenerator.undo();
+  }
+
+  executeRedo() {
+    ActionGenerator.redo();
+  }
+
 }

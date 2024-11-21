@@ -86,12 +86,11 @@ export default class Selector {
       },
     ];
   }
-
   static clearSelection() {
     const canvasElement = document.getElementById("canvas");
     const handles = canvasElement.querySelectorAll("[id^='resize_']"); // id에 "resize_" 포함한 요소 검색
-    handles.forEach((marker) => {
-      canvasElement.removeChild(marker);
+    handles.forEach((handle) => {
+      canvasElement.removeChild(handle);
     });
   }
 }

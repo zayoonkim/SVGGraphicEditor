@@ -1,10 +1,12 @@
 import Connector from "./Connector.js";
+import UIView from "../view/uiView.js";
 
   export default class ActionHandler {
     // canvas
 
     static updateCanvasColor(op) {
         Connector.getCanvas().updateColor(op.value);
+        UIView.setCanvasToolbarState();
     }
 
     static updateCanvasSize(op) {
@@ -26,17 +28,21 @@ import Connector from "./Connector.js";
     }
 
     static insertShape(op) {
-        Connector.getCanvas().addShapeModel(op.shapeType, op.position);
+        Connector.getCanvas().addShapeModel(op.shapeId, op.shapeType, op.position, op.size);
     }
 
     static deleteShape(op) {
-        Connector.getCanvas().deleteShapeModel(op.shapeId);
+        Connector.getCanvas().deleteObjectModel(op.shapeId);
     }
 
     // text
     
     static insertText(op) {
-        Connector.getCanvas().addTextModel(op.textValue, op.textPosition);
+        Connector.getCanvas().addTextModel(op.textId, op.textValue, op.textPosition);
+    }
+
+    static deleteText(op) {
+        Connector.getCanvas().deleteObjectModel(op.textId);
     }
 
     static moveText(op) {
