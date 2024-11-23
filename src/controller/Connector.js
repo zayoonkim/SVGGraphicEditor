@@ -39,7 +39,7 @@ export default class Connector {
         const object = this.getObjectById(objectId);
         if (object) {
             if (object.getType() === "text") {
-                UIView.renderTextProperties(objectId); 
+                UIView.renderTextProperties(objectId);
             } else {
                 UIView.renderShapeProperties(objectId);
             }
@@ -47,11 +47,14 @@ export default class Connector {
     }
 
     static setToolbarForCanvas() {
-        UIView.resetToolbar();
+        UIView.setCanvasToolbarState();
     }
 
     static getExportData() {
         return Core.Model.getExportData();
     }
-   
+
+    static updateUndoRedoState(undoable, redoable) {
+        UIView.updateUndoRedoState(undoable, redoable);
+    }
 }

@@ -13,10 +13,14 @@ export const DEFAULT_CANVAS_JSON = {
 };
 
 export const DEFAULT_SHAPE_POSITION = (e) => ({
-    x: e.offsetX,
-    y: e.offsetY,
-    width: 100,
-    height: 100
+    position: {
+        x: e.offsetX,
+        y: e.offsetY,
+    },
+    size: {
+        width: 100,
+        height: 100
+    }
 });
 
 export const DEFAULT_TEXT_DATA = {

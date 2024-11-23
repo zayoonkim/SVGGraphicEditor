@@ -1,6 +1,5 @@
 import Shape from "./shape.js";
 import Text from "./text.js";
-import { nanoid } from 'https://cdn.skypack.dev/nanoid';
 import { DEFAULT_TEXT_DATA } from '../constant.js';
 
 
@@ -62,14 +61,14 @@ export default class Canvas {
     this.notifyListeners("size");
   }
 
-  addShapeModel(shapeType, position) {
+  addShapeModel(shapeId, shapeType, position, size) {
     const shapeData = {
       type: shapeType,
-      id: nanoid(),
+      id: shapeId,
       stroke: { color: "#000000", width: 1 },
       fill: { color: "#ffffff", opacity: 1.0 },
       position: { x: position.x, y: position.y },
-      size: { width: position.width, height: position.height },
+      size: { width: size.width, height: size.height },
       rotation: 0,
       alignment: "center"
     };
@@ -77,19 +76,20 @@ export default class Canvas {
     this.notifyListeners("addingShape");
   }
 
-  deleteShapeModel(shapeId) {
+  deleteObjectModel(shapeId) {
     const index = this.objectList().findIndex(shape => shape.getId() === shapeId);
     this.objectList().splice(index, 1);
     this.notifyListeners("deletingShape", shapeId);
   }
 
-  addTextModel(value, position) {
+  addTextModel(textId, value, position) {
     const textData = {
       ...DEFAULT_TEXT_DATA,
-      id: nanoid(),
+      id: textId,
       textContent: value,
       position: { x: position.x, y: position.y }
     }
+    console.log(textData);
     this.objectList().push(new Text(textData));
     this.notifyListeners("addingText");
   }

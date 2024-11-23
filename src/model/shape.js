@@ -73,7 +73,7 @@ export default class Shape {
         this.listeners.push(listener);
     }
 
-    notifyListeners(changeType) {
+    notifyListeners(changeType, shapeId) {
         this.listeners.forEach((listener) => listener(changeType));
     }
 

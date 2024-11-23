@@ -4,6 +4,7 @@ import Connector from "../controller/Connector.js";
 import { DEFAULT_SHAPE_POSITION, DEFAULT_TEXT_DATA } from "../constant.js";
 import ActionGenerator from "../controller/actionGenerator.js";
 import Selector from "../controller/selector.js";
+import { nanoid } from 'https://cdn.skypack.dev/nanoid';
 
 export default class CanvasView {
   constructor(canvasModel) {
@@ -112,9 +113,9 @@ export default class CanvasView {
 
   resgisterDeleteEvent() {
     window.addEventListener("keydown", (e) => {
-      const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId())
-      if (e.key === "Backspace" && selectedShape !== undefined) {
-        ActionGenerator.deleteShape(selectedShape.getId());
+      const selectedObject = Connector.getObjectById(Selector.getSelectedObjectId())
+      if (e.key === "Backspace" && selectedObject !== undefined) {
+        selectedObject.getType() === "text" ? ActionGenerator.deleteText(selectedObject.getId()) : ActionGenerator.deleteShape(selectedObject.getId());
         Selector.clearSelection();
       }
     });
@@ -185,33 +186,30 @@ export default class CanvasView {
       return;
     }
     this.canvasElement.style.cursor = "default";
+    let id = nanoid();
     if (this.isDragging) {
-      let position = this.calculatePosition(e);
-      ActionGenerator.insertShape(this.selectedShapeType, position);
+      let {position, size} = this.calculateAttribute(e);
+      ActionGenerator.insertShape(id, this.selectedShapeType, position, size);
     } else {
-      let position = DEFAULT_SHAPE_POSITION(e);
-      ActionGenerator.insertShape(this.selectedShapeType, position);
+      let {position, size} = DEFAULT_SHAPE_POSITION(e);
+      ActionGenerator.insertShape(id, this.selectedShapeType, position, size);
     }
     //도형 Preview 삭제 및 초기화
     this.removePreview();
     this.isDrawing = false;
     this.isDragging = false;
     this.selectedShapeType = null;
+    // TODO: 삽입된 도형 선택
+    Selector.setSelectedObject(id);
+    Connector.setToolbarForObject(id);
+
+    e.stopImmediatePropagation();
   }
 
   showTextInput(e) {
     if (!this.isAddingText) return;
 
     const clickPosition = { x: e.offsetX, y: e.offsetY };
-
-    const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    textElement.setAttribute("x", clickPosition.x);
-    textElement.setAttribute("y", clickPosition.y);
-    textElement.setAttribute("font-size", DEFAULT_TEXT_DATA.font.size);
-    textElement.setAttribute("font-family", DEFAULT_TEXT_DATA.font.family);
-    textElement.setAttribute("fill", DEFAULT_TEXT_DATA.font.fill);
-    textElement.setAttribute("font-weight", DEFAULT_TEXT_DATA.font.weight);
-    this.canvasElement.appendChild(textElement);
 
     // input 추가
     const foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
@@ -264,7 +262,8 @@ export default class CanvasView {
     this.canvasElement.removeChild(foreignObject);
 
     if (textValue) {
-      ActionGenerator.insertText(textValue, clickPosition);
+      const id = nanoid();
+      ActionGenerator.insertText(id, textValue, clickPosition);
     }
 
     this.isAddingText = false;
@@ -272,12 +271,16 @@ export default class CanvasView {
   }
 
 
-  calculatePosition(e) {
+  calculateAttribute(e) {
     return {
-      x: Math.min(this.startX, e.offsetX),
-      y: Math.min(this.startY, e.offsetY),
-      width: Math.abs(e.offsetX - this.startX),
-      height: Math.abs(e.offsetY - this.startY),
+      position: {
+        x: Math.min(this.startX, e.offsetX),
+        y: Math.min(this.startY, e.offsetY),
+      },
+      size: {
+        width: Math.abs(e.offsetX - this.startX),
+        height: Math.abs(e.offsetY - this.startY),
+      }
     };
   }
 
@@ -316,6 +319,8 @@ export default class CanvasView {
     const shapeElement = document.getElementById(shapeId);
     if (shapeElement) {
       this.canvasElement.removeChild(shapeElement);
+      // 도형 제거 시 캔버스 툴바로 갱신
+      Connector.setToolbarForCanvas();
     }
   }
 

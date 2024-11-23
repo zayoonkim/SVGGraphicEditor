@@ -15,14 +15,6 @@ export default class ShapeView {
     this.newX, this.newY, this.newWidth, this.newHeight;
   }
 
-  // changeType에 따른 업데이트 처리
-  update(changeType) {
-    if (changeType === "position" || changeType === "size") {
-      this.updatePosition();
-    } else if(changeType === "color") {
-      this.updateColor();
-    }
-  }
 
   createSVGElement() {
     const canvasElement = document.getElementById("canvas");
@@ -112,7 +104,9 @@ export default class ShapeView {
 
         const newPosition = { x: finalX, y: finalY };
         // 위치 이동 액션 생성
-        ActionGenerator.updateShapePosition(shape.getId(), newPosition);
+        if(dx, dy !== 0) {
+          ActionGenerator.updateShapePosition(shape.getId(), newPosition);
+        }
         this.isDragging = false;
         this.createResizeHandles();
       } else if (this.isResizing) {
@@ -266,10 +260,19 @@ export default class ShapeView {
     }
   }
 
+  // changeType에 따른 업데이트 처리
+  update(changeType) {
+    if (changeType === "position" || changeType === "size") {
+      this.updatePosition();
+    } else if(changeType === "color") {
+      this.updateColor();
+    }
+  }
+
   // view 업데이트
   updatePosition() {
-    const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
-    const shapeElement = document.getElementById(selectedShape.getId());
+    const selectedShape = Connector.getObjectById(this.shape.getId());
+    const shapeElement = document.getElementById(this.shape.getId());
     const { x, y } = selectedShape.position();
     const { width, height } = selectedShape.size();
 
@@ -294,10 +297,10 @@ export default class ShapeView {
   }
 
   updateColor() {
-    const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
-    const shapeElement = document.getElementById(selectedShape.getId());
+    // const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
+    const shapeElement = document.getElementById(this.shape.getId());
 
-    shapeElement.setAttribute("fill", selectedShape.fillColor())
+    shapeElement.setAttribute("fill", this.shape.fillColor())
   }
 }
 
