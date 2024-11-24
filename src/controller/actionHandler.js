@@ -1,12 +1,10 @@
 import Connector from "./Connector.js";
-import UIView from "../view/uiView.js";
 
   export default class ActionHandler {
     // canvas
 
     static updateCanvasColor(op) {
         Connector.getCanvas().updateColor(op.value);
-        UIView.setCanvasToolbarState();
     }
 
     static updateCanvasSize(op) {

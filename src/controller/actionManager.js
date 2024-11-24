@@ -1,7 +1,6 @@
 import ActionHandler from "./actionHandler.js";
 import Selector from "./selector.js";
 import Connector from "./Connector.js";
-import UIView from "../view/uiView.js";
 
 export default class ActionManager {
   static undoStack = [];

@@ -298,7 +298,6 @@ export default class ShapeView {
   }
 
   updateColor() {
-    // const selectedShape = Connector.getObjectById(Selector.getSelectedObjectId());
     const shapeElement = document.getElementById(this.shape.getId());
 
     shapeElement.setAttribute("fill", this.shape.fillColor())
