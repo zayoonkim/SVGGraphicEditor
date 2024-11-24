@@ -1,6 +1,5 @@
 import ActionManager from "./actionManager.js";
 import Connector from "./Connector.js";
-import Selector from "./selector.js";
 
 // TODO: 액션 설계
 

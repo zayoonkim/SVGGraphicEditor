@@ -73,7 +73,7 @@ export default class UIView {
 
     this.undoButton.style.opacity = isUndoable ? "1" : "0.3";
     this.undoButton.style.pointerEvents = isUndoable ? "auto" : "none";
-    
+
     this.redoButton.style.opacity = isRedoable ? "1" : "0.3";
     this.redoButton.style.pointerEvents = isRedoable ? "auto" : "none";
   }
@@ -151,13 +151,26 @@ export default class UIView {
   updateCanvasColor(e) {
     const newColor = e.target.value;
     ActionGenerator.updateCanvasColor(newColor);
+    UIView.setCanvasToolbarState();
   }
 
   updateCanvasSize() {
     const widthInput = document.getElementById("widthInput");
     const heightInput = document.getElementById("heightInput");
-    const newWidth = parseInt(widthInput.value, 10);
-    const newHeight = parseInt(heightInput.value, 10);
+    let newWidth = widthInput.value;
+    let newHeight = heightInput.value;
+
+    // 문자 / 음수 입력 시의 유효성 검사
+    if (isNaN(newWidth) || isNaN(newHeight) || newWidth <= 0 || newHeight <= 0) {
+      alert(isNaN(newWidth) || isNaN(newHeight) 
+        ? "숫자만 입력 가능합니다." 
+        : "양수 값을 입력해주시기 바랍니다."
+      );
+      const { width, height } = Connector.getCanvasSize();
+      widthInput.value = width;
+      heightInput.value = height;
+      return;
+    }
     ActionGenerator.updateCanvasSize(newWidth, newHeight);
   }
 

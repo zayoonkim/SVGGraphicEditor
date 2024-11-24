@@ -315,6 +315,7 @@ export default class CanvasView {
     console.log("view 색상 업데이트");
     if (this.canvasElement) {
       this.canvasElement.style.backgroundColor = newColor;
+      Connector.setToolbarForCanvas();
     }
   }
 
@@ -323,6 +324,7 @@ export default class CanvasView {
     if (this.canvasElement) {
       this.canvasElement.setAttribute("width", width);
       this.canvasElement.setAttribute("height", height);
+      Connector.setToolbarForCanvas();
     }
   }
   // canvas -> 모델에 도형 추가 시 실행
@@ -331,6 +333,7 @@ export default class CanvasView {
       const lastShape = this.canvasModel.objectList().at(-1);
       const shapeElement = new ShapeView(lastShape);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
+      Connector.setToolbarForObject(lastShape.getId());
     }
   }
 
@@ -339,6 +342,7 @@ export default class CanvasView {
       const lastShape = this.canvasModel.objectList().at(-1);
       const textElement = new TextView(lastShape);
       this.canvasElement.appendChild(textElement.createTextElement());
+      Connector.setToolbarForObject(lastShape.getId());
     }
   }
 
