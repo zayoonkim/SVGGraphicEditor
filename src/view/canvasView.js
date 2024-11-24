@@ -17,7 +17,7 @@ export default class CanvasView {
     this.previewElement = null;
     // 모델의 상태 변화에 대한 리스너
     this.canvasModel.addListener(this.update.bind(this));
-    this.resgisterDeleteEvent();
+    this.resgisterKeyEvent();
     this.registerCanvasClickEvent();
     this.render();
   }
@@ -111,12 +111,39 @@ export default class CanvasView {
     }
   }
 
-  resgisterDeleteEvent() {
+  resgisterKeyEvent() {
     window.addEventListener("keydown", (e) => {
-      const selectedObject = Connector.getObjectById(Selector.getSelectedObjectId())
-      if (e.key === "Backspace" && selectedObject !== undefined) {
-        selectedObject.getType() === "text" ? ActionGenerator.deleteText(selectedObject.getId()) : ActionGenerator.deleteShape(selectedObject.getId());
-        Selector.clearSelection();
+      const selectedObject = this.canvasModel.getObjectById(Selector.getSelectedObjectId()),
+        _getModifiedPosByKeyInput = (key, pos) => {
+          const {x, y} = pos,
+            incDecValueByKey = key === "ArrowRight" || key === "ArrowDown" ? 20 : -20;
+
+          return {
+            x: key === "ArrowLeft" || key === "ArrowRight" ? x + incDecValueByKey : x,
+            y: key === "ArrowUp" || key === "ArrowDown" ? y + incDecValueByKey : y
+          };
+        };
+
+      if (selectedObject != null) {
+        const isTextSelected = selectedObject.getType() === "text",
+          selectedObjectId = selectedObject.getId();
+
+        switch (e.key) {
+          case "Backspace":
+          case "Delete":
+            ActionGenerator[ isTextSelected ? "deleteText" : "deleteShape" ](selectedObjectId);
+            Selector.clearSelection();
+            break;
+          case "ArrowLeft":
+          case "ArrowRight":
+          case "ArrowUp":
+          case "ArrowDown":
+            ActionGenerator[ isTextSelected ? "updateTextPosition" : "updateShapePosition" ](selectedObjectId,
+              _getModifiedPosByKeyInput(e.key, selectedObject.position()));
+            break;
+          default:
+            break;
+        }
       }
     });
   }

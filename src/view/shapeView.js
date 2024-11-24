@@ -108,7 +108,6 @@ export default class ShapeView {
           ActionGenerator.updateShapePosition(shape.getId(), newPosition);
         }
         this.isDragging = false;
-        this.createResizeHandles();
       } else if (this.isResizing) {
         this.endResizing(e);
       }
@@ -271,8 +270,8 @@ export default class ShapeView {
 
   // view 업데이트
   updatePosition() {
-    const selectedShape = Connector.getObjectById(this.shape.getId());
-    const shapeElement = document.getElementById(this.shape.getId());
+    const selectedShape = this.shape;
+    const shapeElement = document.getElementById(selectedShape.getId());
     const { x, y } = selectedShape.position();
     const { width, height } = selectedShape.size();
 
@@ -294,6 +293,8 @@ export default class ShapeView {
       ].join(" ");
       shapeElement.setAttribute("points", points);
     }
+    Selector.setSelectedObject(this.shape.getId());
+    this.createResizeHandles();
   }
 
   updateColor() {

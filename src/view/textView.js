@@ -47,8 +47,6 @@ export default class TextView {
         this.startClientY = e.clientY;
 
         this.isDragging = true;
-        this.createResizeHandles();
-
 
         document.addEventListener("mousemove", this.handleDragging.bind(this));
         document.addEventListener("mouseup", this.handleMouseUp.bind(this));
@@ -180,6 +178,8 @@ export default class TextView {
     updatePosition(position) {
         this.textElement.setAttribute("x", position.x);
         this.textElement.setAttribute("y", position.y + 15);
+        Selector.setSelectedObject(this.text.getId());
+        this.createResizeHandles();
     }
 
     updateColor(color) {
