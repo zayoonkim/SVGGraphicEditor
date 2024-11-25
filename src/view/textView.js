@@ -9,6 +9,8 @@ export default class TextView {
         this.startClientX = 0;
         this.startClientY = 0;
         this.textElement = null;
+        this.isDragging = false;
+
         this.text.addListener(this.update.bind(this));
     }
 
@@ -22,10 +24,11 @@ export default class TextView {
         textElement.setAttribute("fill", text.fillColor());
         textElement.setAttribute("stroke", text.stroke());
         textElement.setAttribute("x", text.position().x);
-        textElement.setAttribute("y", text.position().y + 15);
+        textElement.setAttribute("y", text.position().y);
         textElement.setAttribute("font-family", text.fontFamily());
         textElement.setAttribute("font-weight", text.fontWeight());
         textElement.setAttribute("font-size", text.fontSize());
+        textElement.setAttribute("dominant-baseline", "hanging");
         textElement.style.cursor = "text";
 
         // 이벤트 바인딩
@@ -47,26 +50,25 @@ export default class TextView {
         this.startClientY = e.clientY;
 
         this.isDragging = true;
+        this.createPreview();
+
 
         document.addEventListener("mousemove", this.handleDragging.bind(this));
         document.addEventListener("mouseup", this.handleMouseUp.bind(this));
 
     }
 
-    // TODO : 이동 시 Preview 객체 생성
     handleDragging(e) {
         if (!this.isDragging) return;
-        // const dx = e.clientX - this.startClientX;
-        // const dy = e.clientY - this.startClientY;
 
-        // const newX = this.text.position().x + dx;
-        // const newY = this.text.position().y + dy;
-
-        // this.textElement.setAttribute("x", newX);
-        // this.textElement.setAttribute("y", newY + 15);
-
-        // this.startClientX = e.clientX;
-        // this.startClientY = e.clientY;
+        const dx = e.clientX - this.startClientX;
+        const dy = e.clientY - this.startClientY;
+    
+        const newX = this.text.position().x + dx;
+        const newY = this.text.position().y + dy;
+    
+        // 프리뷰 위치 업데이트
+        this.updatePreviewPosition({ x: newX, y: newY });
     }
 
     handleMouseUp(e) {
@@ -81,22 +83,46 @@ export default class TextView {
                 x: finalX,
                 y: finalY,
             };
-
             ActionGenerator.updateTextPosition(this.text.getId(), newPosition);
         }
         this.isDragging = false;
+        this.removePreview();
         document.removeEventListener("mousemove", this.handleDragging.bind(this));
         document.removeEventListener("mouseup", this.handleMouseUp.bind(this));
     }
 
     handleDoubleClick() {
-        
-        clearTimeout(this.clickTimeout);
+        // clearTimeout(this.clickTimeout);
         this.startEditing(this.textElement);
+    }
+
+    createPreview() {
+        // 텍스트 프리뷰 생성
+        this.previewElement = this.textElement.cloneNode(true);
+        this.previewElement.setAttribute("opacity", "0.5"); // 반투명 효과
+        this.previewElement.setAttribute("pointer-events", "none"); // 이벤트 차단
+        const canvasElement = document.getElementById("canvas");
+        canvasElement.appendChild(this.previewElement);
+    }
+    
+    updatePreviewPosition({ x, y }) {
+        if (this.previewElement) {
+            this.previewElement.setAttribute("x", x);
+            this.previewElement.setAttribute("y", y);
+        }
+    }
+    
+    removePreview() {
+        // 프리뷰 제거
+        if (this.previewElement) {
+            this.previewElement.remove();
+            this.previewElement = null;
+        }
     }
 
     createResizeHandles() {
         const canvasElement = document.getElementById("canvas");
+        Selector.clearSelection();
         const handleSize = 8;
         Selector.getHandlePositions().forEach((handle) => {
           const handleElement = document.createElementNS(
@@ -110,10 +136,21 @@ export default class TextView {
           handleElement.setAttribute("height", handleSize);
           handleElement.setAttribute("fill", "#4F80FF");
           handleElement.setAttribute("style", `cursor:${handle.cursor}`);
-          handleElement.addEventListener("mousedown", (e) => this.startResizing(e));
           canvasElement.appendChild(handleElement);
         });
       }
+
+      updateHandles() {
+        const handlePositions = Selector.getHandlePositions();
+    
+        handlePositions.forEach((handle) => {
+            const handleElement = document.getElementById(`resize_${handle.id}`);
+            if (handleElement) {
+                handleElement.setAttribute("x", handle.x);
+                handleElement.setAttribute("y", handle.y);
+            }
+        });
+    }
 
     startEditing(element) {
         const text = this.text;
@@ -177,7 +214,7 @@ export default class TextView {
 
     updatePosition(position) {
         this.textElement.setAttribute("x", position.x);
-        this.textElement.setAttribute("y", position.y + 15);
+        this.textElement.setAttribute("y", position.y);
         Selector.setSelectedObject(this.text.getId());
         this.createResizeHandles();
     }
@@ -189,5 +226,6 @@ export default class TextView {
     updateSize(size) {
         console.log("fontSize 업데이트")
         this.textElement.setAttribute("font-size", size);
+        this.updateHandles(); // 핸들 위치 동적 갱신
     }
 }

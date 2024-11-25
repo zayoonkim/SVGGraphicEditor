@@ -241,7 +241,7 @@ export default class CanvasView {
     // input 추가
     const foreignObject = document.createElementNS("http://www.w3.org/2000/svg", "foreignObject");
     foreignObject.setAttribute("x", clickPosition.x);
-    foreignObject.setAttribute("y", clickPosition.y - 10);
+    foreignObject.setAttribute("y", clickPosition.y - 20);
     foreignObject.setAttribute("width", "300");
     foreignObject.setAttribute("height", "40");
 
