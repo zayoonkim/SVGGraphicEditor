@@ -45,6 +45,10 @@ export default class Core {
     };
 
     static View = {
+        getCanvasView() {
+            return Core.canvasView;
+        },
+
         setDrawingShapeType(shapeType) {
             Core.canvasView.setDrawingShapeType(shapeType);
         },
@@ -55,6 +59,10 @@ export default class Core {
 
         updateShapePosition(shapeId) {
             Core.shapeView.updateShapePosition(shapeId);
+        },
+
+        getObjectViewById(id) {
+            Core.canvasView.getObjectViewById(id);
         }
     };
 

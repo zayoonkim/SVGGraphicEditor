@@ -7,6 +7,10 @@ export default class Connector {
         return Core.Model.getCanvas();
     }
 
+    static getCanvasView() {
+        return Core.View.getCanvasView();
+    }
+
     static getObjectById(id) {
         return Core.Model.getObjectById(id);
     }

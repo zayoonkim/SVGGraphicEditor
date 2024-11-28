@@ -347,12 +347,17 @@ export default class CanvasView {
   }
 
   deleteShapeOfCanvas(shapeId) {
-    const shapeElement = document.getElementById(shapeId);
+    const shapeElement = this.getObjectViewById(shapeId);
+    console.log(shapeElement);
     if (shapeElement) {
       this.canvasElement.removeChild(shapeElement);
       // 도형 제거 시 캔버스 툴바로 갱신
       Connector.setToolbarForCanvas();
     }
+  }
+
+  getObjectViewById(id) {
+    return this.canvasElement.querySelector(`#${id}`); 
   }
 
 

@@ -1,6 +1,8 @@
 import ActionGenerator from "../controller/actionGenerator.js";
 import Connector from "../controller/Connector.js";
+import HandleController from "../controller/handleController.js";
 import Selector from "../controller/selector.js";
+import Core from "../controller/core.js";
 
 export default class ShapeView {
   constructor(shape) {
@@ -15,13 +17,12 @@ export default class ShapeView {
     this.newX, this.newY, this.newWidth, this.newHeight;
   }
 
-
   createSVGElement() {
-    const canvasElement = document.getElementById("canvas");
+    const canvasElement = Core.View.getCanvasView().canvasElement;
     const shape = this.shape;
     let element;
 
-    switch(shape.getType()) {
+    switch (shape.getType()) {
       case "rectangle":
         element = document.createElementNS("http://www.w3.org/2000/svg", "rect");
         element.setAttribute("x", shape.position().x);
@@ -117,36 +118,19 @@ export default class ShapeView {
     return this.element;
   }
 
+  getType() {
+    return this.shape.getType();
+  }
+
   startMoving(e) {
     this.isDragging = true; // TODO : 추후 flag 분리 예정
     this.startclientX = e.clientX;
     this.startclientY = e.clientY;
     Selector.setSelectedObject(this.shape.getId());
-    this.createResizeHandles();
+    HandleController.createResizeHandles(this);
     this.createPreviewShape(e.clientX, e.clientY);
     Connector.setToolbarForObject(this.shape.getId());
 
-  }
-
-  // resizeHandle 렌더링
-  createResizeHandles() {
-    const canvasElement = document.getElementById("canvas");
-    const handleSize = 8;
-    Selector.getHandlePositions().forEach((handle) => {
-      const handleElement = document.createElementNS(
-        "http://www.w3.org/2000/svg",
-        "rect"
-      );
-      handleElement.setAttribute("id", `resize_${handle.id}`);
-      handleElement.setAttribute("x", handle.x);
-      handleElement.setAttribute("y", handle.y);
-      handleElement.setAttribute("width", handleSize);
-      handleElement.setAttribute("height", handleSize);
-      handleElement.setAttribute("fill", "#4F80FF");
-      handleElement.setAttribute("style", `cursor:${handle.cursor}`);
-      handleElement.addEventListener("mousedown", (e) => this.startResizing(e));
-      canvasElement.appendChild(handleElement);
-    });
   }
 
   // 도형 resizing
@@ -216,11 +200,11 @@ export default class ShapeView {
     this.isResizing = false;
     this.currentHandle = null;
     ActionGenerator.resizeShape(this.shape.getId(), { width: this.newWidth, height: this.newHeight }, { x: this.newX, y: this.newY });
-    this.createResizeHandles();
+    HandleController.createResizeHandles(this);
   }
 
   createPreviewShape() {
-    const canvasElement = document.getElementById("canvas");
+    const canvasElement = Core.View.getCanvasView().canvasElement;
     this.previewShape = document.createElementNS("http://www.w3.org/2000/svg", this.element.tagName);
     canvasElement.appendChild(this.previewShape);
     this.updatePreviewShapePosition(
@@ -263,7 +247,7 @@ export default class ShapeView {
   update(changeType) {
     if (changeType === "position" || changeType === "size") {
       this.updatePosition();
-    } else if(changeType === "color") {
+    } else if (changeType === "color") {
       this.updateColor();
     }
   }
@@ -271,7 +255,7 @@ export default class ShapeView {
   // view 업데이트
   updatePosition() {
     const selectedShape = this.shape;
-    const shapeElement = document.getElementById(selectedShape.getId());
+    const shapeElement = Core.View.getCanvasView().getObjectViewById(selectedShape.getId());
     const { x, y } = selectedShape.position();
     const { width, height } = selectedShape.size();
 
@@ -294,11 +278,11 @@ export default class ShapeView {
       shapeElement.setAttribute("points", points);
     }
     Selector.setSelectedObject(this.shape.getId());
-    this.createResizeHandles();
+    HandleController.createResizeHandles(this);
   }
 
   updateColor() {
-    const shapeElement = document.getElementById(this.shape.getId());
+    const shapeElement = Core.View.getCanvasView().getObjectViewById(this.shape.getId());
 
     shapeElement.setAttribute("fill", this.shape.fillColor())
   }
