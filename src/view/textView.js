@@ -1,6 +1,8 @@
 import Selector from "../controller/selector.js";
 import ActionGenerator from "../controller/actionGenerator.js";
 import Connector from "../controller/Connector.js";
+import HandleController from "../controller/handleController.js";
+import Core from "../controller/core.js";
 
 export default class TextView {
     constructor(text) {
@@ -16,7 +18,7 @@ export default class TextView {
 
     createTextElement() {
         const text = this.text;
-        const canvasElement = document.getElementById("canvas");
+        const canvasElement = Core.View.getCanvasView().canvasElement;
         const textElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
         textElement.setAttribute("id", text.getId());
         textElement.textContent = text.content();
@@ -39,6 +41,10 @@ export default class TextView {
         this.textElement = textElement;
         canvasElement.appendChild(textElement);
         return textElement;
+    }
+
+    getType() {
+        return this.text.getType();
     }
 
     handleMouseDown(e) {
@@ -101,7 +107,7 @@ export default class TextView {
         this.previewElement = this.textElement.cloneNode(true);
         this.previewElement.setAttribute("opacity", "0.5"); // 반투명 효과
         this.previewElement.setAttribute("pointer-events", "none"); // 이벤트 차단
-        const canvasElement = document.getElementById("canvas");
+        const canvasElement = Core.View.getCanvasView().canvasElement;
         canvasElement.appendChild(this.previewElement);
     }
     
@@ -118,38 +124,6 @@ export default class TextView {
             this.previewElement.remove();
             this.previewElement = null;
         }
-    }
-
-    createResizeHandles() {
-        const canvasElement = document.getElementById("canvas");
-        Selector.clearSelection();
-        const handleSize = 8;
-        Selector.getHandlePositions().forEach((handle) => {
-          const handleElement = document.createElementNS(
-            "http://www.w3.org/2000/svg",
-            "rect"
-          );
-          handleElement.setAttribute("id", `resize_${handle.id}`);
-          handleElement.setAttribute("x", handle.x);
-          handleElement.setAttribute("y", handle.y);
-          handleElement.setAttribute("width", handleSize);
-          handleElement.setAttribute("height", handleSize);
-          handleElement.setAttribute("fill", "#4F80FF");
-          handleElement.setAttribute("style", `cursor:${handle.cursor}`);
-          canvasElement.appendChild(handleElement);
-        });
-      }
-
-      updateHandles() {
-        const handlePositions = Selector.getHandlePositions();
-    
-        handlePositions.forEach((handle) => {
-            const handleElement = document.getElementById(`resize_${handle.id}`);
-            if (handleElement) {
-                handleElement.setAttribute("x", handle.x);
-                handleElement.setAttribute("y", handle.y);
-            }
-        });
     }
 
     startEditing(element) {
@@ -216,7 +190,7 @@ export default class TextView {
         this.textElement.setAttribute("x", position.x);
         this.textElement.setAttribute("y", position.y);
         Selector.setSelectedObject(this.text.getId());
-        this.createResizeHandles();
+        HandleController.createResizeHandles(this);
     }
 
     updateColor(color) {
