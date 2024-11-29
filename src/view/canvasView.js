@@ -5,6 +5,7 @@ import { DEFAULT_SHAPE_POSITION, DEFAULT_TEXT_DATA } from "../constant.js";
 import ActionGenerator from "../controller/actionGenerator.js";
 import Selector from "../controller/selector.js";
 import { nanoid } from 'https://cdn.skypack.dev/nanoid';
+import HandleController from "../controller/handleController.js";
 
 export default class CanvasView {
   constructor(canvasModel) {
@@ -15,6 +16,7 @@ export default class CanvasView {
     this.isDragging = false;
     this.isAddingText = false;
     this.previewElement = null;
+    this.objectViews = []; // 객체 view 관리 배열
     // 모델의 상태 변화에 대한 리스너
     this.canvasModel.addListener(this.update.bind(this));
     this.resgisterKeyEvent();
@@ -115,7 +117,7 @@ export default class CanvasView {
     window.addEventListener("keydown", (e) => {
       const selectedObject = this.canvasModel.getObjectById(Selector.getSelectedObjectId()),
         _getModifiedPosByKeyInput = (key, pos) => {
-          const {x, y} = pos,
+          const { x, y } = pos,
             incDecValueByKey = key === "ArrowRight" || key === "ArrowDown" ? 20 : -20;
 
           return {
@@ -131,14 +133,14 @@ export default class CanvasView {
         switch (e.key) {
           case "Backspace":
           case "Delete":
-            ActionGenerator[ isTextSelected ? "deleteText" : "deleteShape" ](selectedObjectId);
+            ActionGenerator[isTextSelected ? "deleteText" : "deleteShape"](selectedObjectId);
             Selector.clearSelection();
             break;
           case "ArrowLeft":
           case "ArrowRight":
           case "ArrowUp":
           case "ArrowDown":
-            ActionGenerator[ isTextSelected ? "updateTextPosition" : "updateShapePosition" ](selectedObjectId,
+            ActionGenerator[isTextSelected ? "updateTextPosition" : "updateShapePosition"](selectedObjectId,
               _getModifiedPosByKeyInput(e.key, selectedObject.position()));
             break;
           default:
@@ -215,10 +217,10 @@ export default class CanvasView {
     this.canvasElement.style.cursor = "default";
     let id = nanoid();
     if (this.isDragging) {
-      let {position, size} = this.calculateAttribute(e);
+      let { position, size } = this.calculateAttribute(e);
       ActionGenerator.insertShape(id, this.selectedShapeType, position, size);
     } else {
-      let {position, size} = DEFAULT_SHAPE_POSITION(e);
+      let { position, size } = DEFAULT_SHAPE_POSITION(e);
       ActionGenerator.insertShape(id, this.selectedShapeType, position, size);
     }
     //도형 Preview 삭제 및 초기화
@@ -229,6 +231,7 @@ export default class CanvasView {
     // TODO: 삽입된 도형 선택
     Selector.setSelectedObject(id);
     Connector.setToolbarForObject(id);
+    HandleController.createResizeHandles(this.getObjectViewById(id));
 
     e.stopImmediatePropagation();
   }
@@ -287,13 +290,15 @@ export default class CanvasView {
 
     // input 제거
     this.canvasElement.removeChild(foreignObject);
+    const id = nanoid();
 
     if (textValue) {
-      const id = nanoid();
       ActionGenerator.insertText(id, textValue, clickPosition);
     }
-
     this.isAddingText = false;
+    Selector.setSelectedObject(id);
+    Connector.setToolbarForObject(id);
+    HandleController.createResizeHandles(this.getObjectViewById(id));
     this.canvasElement.style.cursor = "default";
   }
 
@@ -333,6 +338,8 @@ export default class CanvasView {
       const lastShape = this.canvasModel.objectList().at(-1);
       const shapeElement = new ShapeView(lastShape);
       this.canvasElement.appendChild(shapeElement.createSVGElement());
+      this.objectViews.push(shapeElement);
+      console.log(this.objectViews);
       Connector.setToolbarForObject(lastShape.getId());
     }
   }
@@ -342,12 +349,15 @@ export default class CanvasView {
       const lastShape = this.canvasModel.objectList().at(-1);
       const textElement = new TextView(lastShape);
       this.canvasElement.appendChild(textElement.createTextElement());
+      this.objectViews.push(textElement);
+      console.log(this.objectViews);
+
       Connector.setToolbarForObject(lastShape.getId());
     }
   }
 
   deleteShapeOfCanvas(shapeId) {
-    const shapeElement = this.getObjectViewById(shapeId);
+    const shapeElement = this.getObjectViewById(shapeId).element; 
     console.log(shapeElement);
     if (shapeElement) {
       this.canvasElement.removeChild(shapeElement);
@@ -357,8 +367,9 @@ export default class CanvasView {
   }
 
   getObjectViewById(id) {
-    return this.canvasElement.querySelector(`#${id}`); 
+    return this.objectViews.find(
+      (view) => view.shape?.getId() === id || view.text?.getId() === id
+    );
   }
-
 
 }

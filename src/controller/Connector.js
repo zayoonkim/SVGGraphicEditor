@@ -61,4 +61,8 @@ export default class Connector {
     static updateUndoRedoState(undoable, redoable) {
         UIView.updateUndoRedoState(undoable, redoable);
     }
+
+    static getObjectViewById(id) {
+        return Core.View.getObjectViewById(id);
+    }
 }
