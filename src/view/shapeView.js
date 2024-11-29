@@ -60,7 +60,7 @@ export default class ShapeView {
     this.element.setAttribute("opacity", shape.fillOpacity());
     this.element.setAttribute("stroke", shape.stroke().color);
     this.element.setAttribute("stroke-width", shape.stroke().width);
-    
+
     this.element.addEventListener("mouseenter", () => {
       this.element.setAttribute("stroke", "#4F80FF");
       this.element.setAttribute("stroke-width", 1);
@@ -88,7 +88,6 @@ export default class ShapeView {
 
         this.element.setAttribute("visibility", "hidden");
         this.updatePreviewShapePosition(newX, newY, this.shape.size().width, this.shape.size().height);
-        Selector.clearSelection();
       } else if (this.isResizing) {
         this.handleResizing(e);
       }
@@ -105,7 +104,7 @@ export default class ShapeView {
 
         const newPosition = { x: finalX, y: finalY };
         // 위치 이동 액션 생성
-        if(dx, dy !== 0) {
+        if (dx, dy !== 0) {
           ActionGenerator.updateShapePosition(shape.getId(), newPosition);
         }
         this.isDragging = false;
@@ -114,6 +113,7 @@ export default class ShapeView {
       }
       this.removePreview();
       this.element.setAttribute("visibility", "visible");
+      HandleController.createResizeHandles(this);
     });
     return this.element;
   }
@@ -127,7 +127,6 @@ export default class ShapeView {
     this.startclientX = e.clientX;
     this.startclientY = e.clientY;
     Selector.setSelectedObject(this.shape.getId());
-    HandleController.createResizeHandles(this);
     this.createPreviewShape(e.clientX, e.clientY);
     Connector.setToolbarForObject(this.shape.getId());
 
@@ -200,7 +199,6 @@ export default class ShapeView {
     this.isResizing = false;
     this.currentHandle = null;
     ActionGenerator.resizeShape(this.shape.getId(), { width: this.newWidth, height: this.newHeight }, { x: this.newX, y: this.newY });
-    HandleController.createResizeHandles(this);
   }
 
   createPreviewShape() {
@@ -255,7 +253,7 @@ export default class ShapeView {
   // view 업데이트
   updatePosition() {
     const selectedShape = this.shape;
-    const shapeElement = Core.View.getCanvasView().getObjectViewById(selectedShape.getId());
+    const shapeElement = Core.View.getCanvasView().getObjectViewById(selectedShape.getId()).element;
     const { x, y } = selectedShape.position();
     const { width, height } = selectedShape.size();
 
@@ -271,18 +269,17 @@ export default class ShapeView {
       shapeElement.setAttribute("ry", height / 2);
     } else if (selectedShape.getType() === "triangle") {
       const points = [
-        `${x + width / 2},${y}`, 
-        `${x},${y + height}`, 
+        `${x + width / 2},${y}`,
+        `${x},${y + height}`,
         `${x + width},${y + height}`
       ].join(" ");
       shapeElement.setAttribute("points", points);
     }
     Selector.setSelectedObject(this.shape.getId());
-    HandleController.createResizeHandles(this);
   }
 
   updateColor() {
-    const shapeElement = Core.View.getCanvasView().getObjectViewById(this.shape.getId());
+    const shapeElement = Core.View.getCanvasView().getObjectViewById(this.shape.getId()).element;
 
     shapeElement.setAttribute("fill", this.shape.fillColor())
   }

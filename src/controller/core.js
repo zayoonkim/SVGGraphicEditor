@@ -57,12 +57,8 @@ export default class Core {
             Core.canvasView.setAddingTextMode();
         },
 
-        updateShapePosition(shapeId) {
-            Core.shapeView.updateShapePosition(shapeId);
-        },
-
         getObjectViewById(id) {
-            Core.canvasView.getObjectViewById(id);
+            return Core.canvasView.getObjectViewById(id);
         }
     };
 

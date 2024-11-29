@@ -10,7 +10,7 @@ export default class TextView {
         this.isDragging = false;
         this.startClientX = 0;
         this.startClientY = 0;
-        this.textElement = null;
+        this.element = null;
         this.isDragging = false;
 
         this.text.addListener(this.update.bind(this));
@@ -38,7 +38,7 @@ export default class TextView {
         textElement.addEventListener("mousedown", (e) => this.handleMouseDown(e));
         textElement.addEventListener("dblclick", () => this.handleDoubleClick());
 
-        this.textElement = textElement;
+        this.element = textElement;
         canvasElement.appendChild(textElement);
         return textElement;
     }
@@ -69,10 +69,8 @@ export default class TextView {
 
         const dx = e.clientX - this.startClientX;
         const dy = e.clientY - this.startClientY;
-    
         const newX = this.text.position().x + dx;
         const newY = this.text.position().y + dy;
-    
         // 프리뷰 위치 업데이트
         this.updatePreviewPosition({ x: newX, y: newY });
     }
@@ -99,25 +97,24 @@ export default class TextView {
 
     handleDoubleClick() {
         // clearTimeout(this.clickTimeout);
-        this.startEditing(this.textElement);
+        this.startEditing(this.element);
     }
 
     createPreview() {
         // 텍스트 프리뷰 생성
-        this.previewElement = this.textElement.cloneNode(true);
+        this.previewElement = this.element.cloneNode(true);
         this.previewElement.setAttribute("opacity", "0.5"); // 반투명 효과
         this.previewElement.setAttribute("pointer-events", "none"); // 이벤트 차단
         const canvasElement = Core.View.getCanvasView().canvasElement;
         canvasElement.appendChild(this.previewElement);
     }
-    
+
     updatePreviewPosition({ x, y }) {
         if (this.previewElement) {
             this.previewElement.setAttribute("x", x);
             this.previewElement.setAttribute("y", y);
         }
     }
-    
     removePreview() {
         // 프리뷰 제거
         if (this.previewElement) {
@@ -139,7 +136,7 @@ export default class TextView {
         foreignObject.setAttribute("height", "40");
 
         const input = document.createElement("input");
-        input.value = this.textElement.textContent;
+        input.value = this.element.textContent;
         input.style.fontSize = text.fontSize() + "px";
         input.style.fontWeight = text.fontWeight();
         input.style.fontFamily = text.fontFamily();
@@ -148,7 +145,7 @@ export default class TextView {
         input.style.outline = "none";
 
         foreignObject.appendChild(input);
-        this.textElement.replaceWith(foreignObject);
+        this.element.replaceWith(foreignObject);
         input.focus();
 
         const finishEditing = () => {
@@ -159,8 +156,12 @@ export default class TextView {
             if (newText) {
                 ActionGenerator.updateTextContent(text.getId(), newText);
             }
+            // textElement를 새로 생성 -> 참조 오류 방지
+            const newTextElement = this.createTextElement();
+            foreignObject.replaceWith(newTextElement);
 
-            foreignObject.replaceWith(this.textElement);
+            HandleController.createResizeHandles(this);
+
         };
 
         input.addEventListener("blur", finishEditing);
@@ -183,23 +184,23 @@ export default class TextView {
     }
 
     updateContent(content) {
-        this.textElement.textContent = content;
+        this.element.textContent = content;
     }
 
     updatePosition(position) {
-        this.textElement.setAttribute("x", position.x);
-        this.textElement.setAttribute("y", position.y);
+        this.element.setAttribute("x", position.x);
+        this.element.setAttribute("y", position.y);
         Selector.setSelectedObject(this.text.getId());
         HandleController.createResizeHandles(this);
     }
 
     updateColor(color) {
-        this.textElement.setAttribute("fill", color);
+        this.element.setAttribute("fill", color);
     }
 
     updateSize(size) {
         console.log("fontSize 업데이트")
-        this.textElement.setAttribute("font-size", size);
-        this.updateHandles(); // 핸들 위치 동적 갱신
+        this.element.setAttribute("font-size", size);
+        HandleController.updateHandles(); // 핸들 위치 동적 갱신
     }
 }

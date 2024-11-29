@@ -3,11 +3,11 @@ import Selector from './selector.js';
 
 export default class HandleController {
   static createResizeHandles(objView) {
-    const canvasElement = Connector.getCanvasView().canvasElement,
-      isTextView = objView.getType() === "text";
+    const canvasElement = Connector.getCanvasView().canvasElement;
 
-    if (isTextView) {
-      Selector.clearSelection();
+    const existingHandles = canvasElement.querySelectorAll("[id^='resize_']");
+    if (existingHandles.length > 0) {
+      return;
     }
 
     const handleSize = 8;
@@ -25,11 +25,9 @@ export default class HandleController {
       handleElement.setAttribute("height", handleSize);
       handleElement.setAttribute("fill", "#4F80FF");
       handleElement.setAttribute("style", `cursor:${handle.cursor}`);
-
-      if (!isTextView) {
+      if (objView.getType() !== "text") {
         handleElement.addEventListener("mousedown", (e) => objView.startResizing(e));
       }
-
       canvasElement.appendChild(handleElement);
     });
   }
@@ -40,8 +38,8 @@ export default class HandleController {
     handlePositions.forEach((handle) => {
       const handleElement = document.getElementById(`resize_${handle.id}`);
       if (handleElement) {
-          handleElement.setAttribute("x", handle.x);
-          handleElement.setAttribute("y", handle.y);
+        handleElement.setAttribute("x", handle.x);
+        handleElement.setAttribute("y", handle.y);
       }
     });
   }
@@ -49,23 +47,13 @@ export default class HandleController {
   static getHandlePositions() {
     const object = Connector.getObjectById(Selector.getSelectedObjectId());
     const handleSize = 5;
-    if (object.getType() === "text") {
-      const bbox = document.getElementById(object.getId()).getBBox();
-      const x = bbox.x;
-      const y = bbox.y;
-      const width = bbox.width;
-      const height = bbox.height;
+    const bbox = document.getElementById(object.getId()).getBBox();
+    const x = bbox.x;
+    const y = bbox.y;
+    const width = bbox.width;
+    const height = bbox.height;
 
-      return this.calculateHandles(x, y, width, height, handleSize);
-    } else {
-      const x = object.position().x;
-      const y = object.position().y;
-      const width = object.size().width;
-      const height = object.size().height;
-
-      return this.calculateHandles(x, y, width, height, handleSize);
-    }
-
+    return this.calculateHandles(x, y, width, height, handleSize);
   }
 
   static calculateHandles(x, y, width, height, handleSize) {
